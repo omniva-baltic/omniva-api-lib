@@ -1,0 +1,22 @@
+{
+    "name": "mijora/omniva-api",
+    "description": "Omniva API wrapper",
+    "type": "library",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Modestas",
+            "email": "modestas.slivinskas@gmail.com"
+        }
+    ],
+    "require": {
+        "setasign/fpdi": "^2.3",
+        "tecnickcom/tcpdf": "^6.3",
+        "setasign/fpdf": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mijora\\Omniva\\": "src/"
+        }
+    }
+}

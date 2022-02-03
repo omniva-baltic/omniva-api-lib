@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<xsd:schema xmlns="http://service.core.epmx.application.eestipost.ee/xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://service.core.epmx.application.eestipost.ee/xsd">
+    <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+    <xsd:element name="receiveInfoMsgRequest" type="ReceiveInfoMsgRequest"/>
+    <xsd:element name="receiveInfoMsgResponse" type="ReceiveInfoMsgResponse"/>
+    <xsd:complexType name="ReceiveInfoMsgRequest">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgRequestBase">
+                <xsd:sequence>
+                    <xsd:choice>
+                        <xsd:element name="interchange" type="LegacyInterchangeIncomingMsg">
+                            <xsd:annotation>
+                                <xsd:documentation>infomessage/statusmessage's content</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="xmlContent" type="LegacyIncomingMsgContent">
+                            <xsd:annotation>
+                                <xsd:documentation>infomessage/statusmessage's content (@deprecated, content wrapper element will be removed in a later version)</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:choice>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ReceiveInfoMsgResponse">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgResponseBase">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="savedBarcodes" type="BarCodeList">
+                        <xsd:annotation>
+                            <xsd:documentation>Prompt about successful/unsuccessful message saving (@deprecated, will be removed in a future version)</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="faultyBarcodes" type="BarCodeList">
+                        <xsd:annotation>
+                            <xsd:documentation>Barcodes that are with faulty structure (some subtags missing etc) (@deprecated, will be removed in a future version)
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="LegacyIncomingMsgContent">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="interchange" type="LegacyInterchangeIncomingMsg"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="LegacyInterchangeIncomingMsg">
+        <xsd:complexContent>
+            <xsd:extension base="InterchangeBase">
+                <xsd:sequence>
+                    <xsd:element name="item_list" type="PacketItemLegacylist"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItemLegacylist">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Package items with details</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="item" type="PacketItemLegacy"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItemLegacy">
+        <xsd:complexContent>
+            <xsd:extension base="PacketItemBase">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="addressee" type="AddresseeOld"/>
+                    <xsd:element minOccurs="0" name="comment" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="show_return_code_sms" type="xsd:boolean"/>
+                    <xsd:element minOccurs="0" name="show_return_code_email" type="xsd:boolean"/>
+                </xsd:sequence>
+                <xsd:attribute name="id" type="BarCode" use="required"/>
+                <xsd:attribute name="class" type="xsd:string" use="optional"/>
+                <xsd:attribute name="shipment" type="xsd:string" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AddresseeOld">
+        <xsd:complexContent>
+            <xsd:extension base="AddresseeBase">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="person_code" type="PersonalCode"/>
+                    <xsd:element minOccurs="0" name="delivery_time" type="TimeWindow"/>
+                    <xsd:element minOccurs="0" name="pick_up_time" type="PickUpTime"/>
+                    <xsd:element name="address" type="OffLoadSupportedAddress"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="contact" type="Contact"/>
+                </xsd:sequence>
+                <xsd:attribute name="type" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="Contact">
+        <xsd:attribute name="code" type="xsd:string"/>
+        <xsd:attribute name="value" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:simpleType name="BarCode">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="5"/>
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="PartnerId">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="30"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="BarCodeList">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="barcode" type="BarCode"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="BarCodeInfo">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="clientItemId" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="barcode" type="BarCode"/>
+            <xsd:element minOccurs="0" name="message" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="BarCodeInfoList">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="barcodeInfo" type="BarCodeInfo"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="ZipCode">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(.{1,80})?"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="AN35">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(.{1,35})?"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="AN50">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="AN25">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="25"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType abstract="true" name="InterchangeBase">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Here are defined interchange-specific element types, but not message elements</xsd:documentation>
+            <xsd:documentation xml:lang="et">Siin on defineeritud transaktsiooni elemendid</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="header" type="Header"/>
+        </xsd:sequence>
+        <xsd:attribute name="msg_type" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="Header">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="comment" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="file_id" type="xsd:string"/>
+        <xsd:attribute name="sender_cd" type="xsd:string" use="required"/>
+        <xsd:attribute name="currency_cd" type="xsd:string" use="optional"/>
+        <xsd:attribute name="dateTime" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>not used (@deprecated, will be removed in a future version)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="prep_date_time" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>not used (@deprecated, will be removed in a future version)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="recipient_cd" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>not used (@deprecated, will be removed in a future version)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="ref_doc_id" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>not used (@deprecated, will be removed in a future version)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="IncomingInfoMsgRequestBase">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner's ID</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="InterchangeIncomingMsgOnloadSupported">
+        <xsd:complexContent>
+            <xsd:extension base="InterchangeBase">
+                <xsd:sequence>
+                    <xsd:element name="item_list" type="PacketItemOnloadList"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="InterchangeIncomingMsgOnloadNotSupported">
+        <xsd:complexContent>
+            <xsd:extension base="InterchangeBase">
+                <xsd:sequence>
+                    <xsd:element name="item_list" type="PacketItemList"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="IncomingInfoMsgResponseBase">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner, who initiated the request</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="provider" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Provider's ID</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="prompt" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Prompt about successful/unsuccessful message saving (errors here will be for overall message)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="savedPacketInfo" type="BarCodeInfoList">
+                <xsd:annotation>
+                    <xsd:documentation>Prompt about successful/unsuccessful message saving</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="faultyPacketInfo" type="BarCodeInfoList">
+                <xsd:annotation>
+                    <xsd:documentation>Barcodes that are with faulty structure (some subtags missing etc)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItemList">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Package items with details</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="item" type="PacketItem"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItemOnloadList">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">Package items with details</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="item" type="PacketItemOnload"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="PacketItemBase">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="add_service" type="AddService"/>
+            <xsd:element minOccurs="0" name="measures" type="Measures"/>
+            <xsd:element minOccurs="0" name="monetary_values" type="MonetaryValues"/>
+            <xsd:element minOccurs="0" name="account" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="reference_number" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="service" type="xsd:string" use="required"/>
+        <xsd:attribute name="packetUnitIdentificator" type="AN35" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItem">
+        <xsd:complexContent>
+            <xsd:extension base="PacketItemBase">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="comment" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="show_return_code_sms" type="xsd:boolean"/>
+                    <xsd:element minOccurs="0" name="show_return_code_email" type="xsd:boolean"/>
+                    <xsd:element minOccurs="0" name="partnerId" type="PartnerId"/>
+                    <xsd:element name="receiverAddressee" type="ReceiverAddressee"/>
+                    <xsd:element minOccurs="0" name="returnAddressee" type="SenderAddressee"/>
+                </xsd:sequence>
+                <xsd:attribute name="id" type="BarCode" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="PacketItemOnload">
+        <xsd:complexContent>
+            <xsd:extension base="PacketItem">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="onloadAddressee" type="OnloadAddressee"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType abstract="true" name="AddresseeBase">
+        <xsd:sequence>
+            <xsd:element name="person_name" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="ContactableAddressee">
+        <xsd:complexContent>
+            <xsd:extension base="AddresseeBase">
+                <xsd:group ref="Contacts"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ReceiverAddressee">
+        <xsd:complexContent>
+            <xsd:extension base="ContactableAddressee">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="person_code" type="PersonalCode"/>
+                    <xsd:element minOccurs="0" name="delivery_time" type="TimeWindow"/>
+                    <xsd:element name="address" type="OffLoadSupportedAddress"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="SenderAddressee">
+        <xsd:complexContent>
+            <xsd:extension base="ContactableAddressee">
+                <xsd:sequence>
+                    <xsd:element name="address" type="Address"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="OnloadAddressee">
+        <xsd:complexContent>
+            <xsd:extension base="SenderAddressee">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="pick_up_time" type="PickUpTime"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="Address">
+        <xsd:attribute name="postcode" type="ZipCode"/>
+        <xsd:attribute name="deliverypoint" type="xsd:string"/>
+        <xsd:attribute name="country" type="xsd:string"/>
+        <xsd:attribute name="street" type="xsd:string"/>
+        <xsd:attribute name="housenumber" type="xsd:string"/>
+        <xsd:attribute name="apartmentnumber" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:complexType name="OffLoadSupportedAddress">
+        <xsd:complexContent>
+            <xsd:extension base="Address">
+                <xsd:attribute name="offloadPostcode" type="ZipCode" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="AddService">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="option" type="Option"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Option">
+        <xsd:attribute name="code" type="xsd:string"/>
+        <xsd:attribute name="payed_amount" type="xsd:decimal" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="Measures">
+        <xsd:attribute name="weight" type="xsd:string"/>
+        <xsd:attribute name="volume" type="xsd:string"/>
+        <xsd:attribute name="length" type="xsd:string"/>
+        <xsd:attribute name="width" type="xsd:string"/>
+        <xsd:attribute name="height" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:complexType name="MonetaryValues">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="cod_receiver" type="xsd:string"/>
+            <xsd:element maxOccurs="unbounded" name="values" type="Values"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Values">
+        <xsd:attribute name="code" type="xsd:string"/>
+        <xsd:attribute name="amount" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:simpleType name="PersonalCode">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="11"/>
+            <xsd:maxLength value="11"/>
+            <xsd:pattern value="\d{11}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ContactValue">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="50"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:group name="Contacts">
+        <xsd:sequence>
+            <xsd:element form="unqualified" minOccurs="0" name="phone" type="ContactValue"/>
+            <xsd:element form="unqualified" minOccurs="0" name="mobile" type="ContactValue"/>
+            <xsd:element form="unqualified" minOccurs="0" name="email" type="ContactValue"/>
+        </xsd:sequence>
+    </xsd:group>
+    <xsd:complexType name="PickUpTime">
+        <xsd:attribute name="start" type="xsd:string"/>
+        <xsd:attribute name="finish" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:complexType name="TimeWindow">
+        <xsd:attribute name="start" type="xsd:dateTime"/>
+        <xsd:attribute name="end" type="xsd:dateTime"/>
+    </xsd:complexType>
+    <xsd:element name="preSendMsgRequest" type="PreSendMsgRequest"/>
+    <xsd:element name="preSendMsgResponse" type="PreSendMsgResponse"/>
+    <xsd:complexType name="PreSendMsgRequest">
+        <xsd:annotation>
+            <xsd:documentation>Packet data for eplisweb (presend data)</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgRequestBase">
+                <xsd:sequence>
+                    <xsd:element name="interchange" type="InterchangeIncomingMsgOnloadNotSupported"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="PreSendMsgResponse">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgResponseBase"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="clientToClientMsgRequest" type="ClientToClientMsgRequest"/>
+    <xsd:element name="clientToClientMsgResponse" type="ClientToClientMsgResponse"/>
+    <xsd:complexType name="ClientToClientMsgRequest">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgRequestBase">
+                <xsd:sequence>
+                    <xsd:element name="interchange" type="InterchangeIncomingMsgOnloadSupported"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ClientToClientMsgResponse">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgResponseBase"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="businessToClientMsgRequest" type="BusinessToClientMsgRequest"/>
+    <xsd:element name="businessToClientMsgResponse" type="BusinessToClientMsgResponse"/>
+    <xsd:complexType name="BusinessToClientMsgRequest">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgRequestBase">
+                <xsd:sequence>
+                    <xsd:element name="interchange" type="InterchangeIncomingMsgOnloadSupported"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="BusinessToClientMsgResponse">
+        <xsd:complexContent>
+            <xsd:extension base="IncomingInfoMsgResponseBase"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:element name="sendStatusMsgRequest" type="SendStatusMsgRequest"/>
+    <xsd:element name="sendStatusMsgResponse" type="SendStatusMsgResponse"/>
+    <xsd:complexType name="SendStatusMsgRequest">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner, who's requesting statuses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="savedBarcodes" type="BarCodeList">
+                <xsd:annotation>
+                    <xsd:documentation>(not used, deprecated)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="faultyBarcodes" type="BarCodeList">
+                <xsd:annotation>
+                    <xsd:documentation>Barcodes to rerequest event info for</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="nocontent" type="xsd:boolean">
+            <xsd:annotation>
+                <xsd:documentation>set to true to not include the deprecated xmlContent element (if not set or set to false, interchange element will be duplicated directly
+                    in response and xmlContent)</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="SendStatusMsgResponse">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner, who's requesting statuses</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="provider" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Provider's ID</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="prompt" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Prompt about successful/unsuccessful message saving</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="xmlContent" type="EventMsgContent">
+                <xsd:annotation>
+                    <xsd:documentation>infomessage/statusmessage's content (@deprecated, content wrapper will be removed in a future version)</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="interchange" type="InterchangeEvents">
+                <xsd:annotation>
+                    <xsd:documentation>infomessage/statusmessage's content</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EventMsgContent">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="interchange" type="InterchangeEvents"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="InterchangeEvents">
+        <xsd:complexContent>
+            <xsd:extension base="InterchangeBase">
+                <xsd:sequence>
+                    <xsd:element name="item_event" type="EventItemList"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="EventItemList">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="item" type="EventItem"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="EventItem">
+        <xsd:sequence>
+            <xsd:element name="event_cd" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="reason_cd" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="action_cd" type="xsd:string"/>
+            <xsd:element name="event_date_time" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="postal_cd" type="ZipCode"/>
+            <xsd:element minOccurs="0" name="event_location" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="signatory" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="comment" type="xsd:string"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    <xsd:element name="addrcardMsgRequest" type="AddressCardRequest"/>
+    <xsd:element name="addrcardMsgResponse" type="AddressCardResponse"/>
+    <xsd:complexType name="AddressCardRequest">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner axaCode or name, who's requesting address cards</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="sendAddressCardTo" type="AddressCardTo"/>
+            <xsd:element name="cardReceiverEmail" type="xsd:string"/>
+            <xsd:element name="barcodes" type="BarCodeList"/>
+            <xsd:element minOccurs="0" name="format" type="ExportFormatType">
+                <xsd:annotation>
+                    <xsd:documentation>Optional address card export format should be used. Defaults to pdf.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCardResponse">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner axaCode or name, who's requesting address cards</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="messageError" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Error message in case the whole request was considered invalid.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="failedAddressCards" type="BarCodeInfoList">
+                <xsd:annotation>
+                    <xsd:documentation>Lists barcodes whose addresscard load/send failed</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="successAddressCards" type="AddressCardDataList">
+                <xsd:annotation>
+                    <xsd:documentation>Lists barcodes whose addresscard loading/sending succeeded</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCardDataType">
+        <xsd:sequence>
+            <xsd:element name="barcode" type="BarCode"/>
+            <xsd:element minOccurs="0" name="fileData" type="xsd:base64Binary">
+                <xsd:annotation>
+                    <xsd:documentation>Base64 encoded binary data for the addresscard pdf file.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="AddressCardDataList">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="addressCardData" type="AddressCardDataType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="AddressCardTo">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="email"/>
+            <xsd:enumeration value="response"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="ExportFormatType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="pdf"/>
+            <xsd:enumeration value="ezpl"/>
+            <xsd:enumeration value="gepl"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="offloadPOMsgRequest" type="OffloadPOMsgRequest"/>
+    <xsd:element name="offloadPOMsgResponse" type="OffloadPOMsgResponse"/>
+    <xsd:complexType name="OffloadPOMsgRequest">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner axaCode or name, who's requesting offload postoffices</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="OffloadPOMsgResponse">
+        <xsd:sequence>
+            <xsd:element name="partner" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Partner axaCode or name, who's requesting offload postoffices</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element minOccurs="0" name="messageError" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>Error message in case something went wrong.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="postOffices" type="PostOfficeList">
+                <xsd:annotation>
+                    <xsd:documentation>List of postoffices that can be used for offloading packets.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PostOfficeList">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="postOffice" type="PostOffice"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PostOffice">
+        <xsd:sequence>
+            <xsd:element name="zip" type="ZipCode"/>
+            <xsd:element name="name">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:maxLength value="80"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="type" type="OffloadOfficeType"/>
+            <xsd:element minOccurs="0" name="serviceHours" type="xsd:string"/>
+            <xsd:element minOccurs="0" name="closestPoZip" type="ZipCode"/>
+            <xsd:element minOccurs="0" name="closestPmsZip" type="ZipCode"/>
+            <xsd:element name="address" type="PostOfficeAddress"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="PostOfficeAddress">
+        <xsd:sequence>
+            <xsd:element name="a1Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a2Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a3Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a4Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a5Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a6Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a7Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a8Name" type="AddressLvlName"/>
+            <xsd:element minOccurs="0" name="a1Ehak" type="LevelEhak"/>
+            <xsd:element minOccurs="0" name="a2Ehak" type="LevelEhak"/>
+            <xsd:element minOccurs="0" name="a3Ehak" type="LevelEhak"/>
+            <xsd:element minOccurs="0" name="a4Ehak" type="LevelEhak"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="AddressLvlName">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="LevelEhak">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="2"/>
+            <xsd:maxLength value="6"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="OffloadOfficeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PACK_MACHINE"/>
+            <xsd:enumeration value="CALLBOX"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
+  
