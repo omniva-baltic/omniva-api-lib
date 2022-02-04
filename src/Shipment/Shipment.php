@@ -369,16 +369,18 @@ class Shipment
 
             // Package measurement data.
             $measures = $package->getMeasures();
-            $measuresNode = $item->addChild('measures');
-            $measuresNode->addAttribute('weight', $measures->getWeight());
-            if ($measures->getWidth()) {
-                $measuresNode->addAttribute('width', $measures->getWidth());
-            }
-            if ($measures->getVolume()) {
-                $measuresNode->addAttribute('volume', $measures->getVolume());
-            }
-            if ($measures->getHeight()) {
-                $measuresNode->addAttribute('height', $measures->getHeight());
+            if ($measures) {
+		$measuresNode = $item->addChild('measures');
+		$measuresNode->addAttribute('weight', $measures->getWeight());
+		if ($measures->getWidth()) {
+                    $measuresNode->addAttribute('width', $measures->getWidth());
+		}
+		if ($measures->getVolume()) {
+                    $measuresNode->addAttribute('volume', $measures->getVolume());
+		}
+		if ($measures->getHeight()) {
+                    $measuresNode->addAttribute('height', $measures->getHeight());
+		}
             }
             // Monetary data.
             $cod = $package->getCod();

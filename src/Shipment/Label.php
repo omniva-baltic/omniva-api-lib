@@ -20,7 +20,9 @@ class Label
      * @param string $password
      * @param string $api_url
      */
-    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee') {
+
+    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee')
+    {
         $this->request = new Request($username, $password, $api_url);
     }
 
@@ -28,7 +30,9 @@ class Label
      * @param array $barcodes
      * @return mixed
      */
-    public function getLabels($barcodes) {
+
+    public function getLabels($barcodes)
+    {
         if (!is_array($barcodes)) {
             $barcodes = [$barcodes];
         }
@@ -40,14 +44,16 @@ class Label
     }
 
     /*
-     * $mode - I inline, D download, F save to file
+     * $mode - I inline, D download, F save to file, S - return string
      * @param array $barcodes
      * @param bool $combine
      * @param string $mode
      * @param string $name
      * @return mixed
      */
-    public function downloadLabels($barcodes, $combine = true, $mode = 'I', $name = 'Omniva labels') {
+
+    public function downloadLabels($barcodes, $combine = true, $mode = 'I', $name = 'Omniva labels')
+    {
         $result = $this->getLabels($barcodes);
         if (is_array($result['labels'])) {
             $pdf = new Fpdi();
@@ -78,7 +84,10 @@ class Label
                     }
                 }
             }
-            $pdf->Output($mode, $name . '.pdf');
+            if ($mode === 'S') {
+                return $pdf->Output($mode, $name . '.pdf');
+            }
+            return $pdf->Output($mode, $name . '.pdf');
         }
         return false;
     }

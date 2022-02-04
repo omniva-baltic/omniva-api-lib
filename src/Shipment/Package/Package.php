@@ -180,7 +180,7 @@ class Package
     {
         if(!$senderContact->getPersonName())
             throw new OmnivaException("Incorrect XML data provided in contact section: person_name is required.");
-        $this->validateAddress($senderContact->getAddress());
+        $this->validateAddress($senderContact->getAddress(), true);
         $this->senderContact = $senderContact;
         return $this;
     }
@@ -201,7 +201,7 @@ class Package
     {
         if(!$receiverContact->getPersonName())
             throw new OmnivaException("Incorrect XML data provided in contact section: person_name is required.");
-        $this->validateAddress($receiverContact->getAddress());
+        $this->validateAddress($receiverContact->getAddress(), false);
         $this->receiverContact = $receiverContact;
         return $this;
     }
@@ -216,15 +216,16 @@ class Package
         return false;
     }
 
-    public function validateAddress($address)
+    public function validateAddress($address, $sender = false)
     {
-        if(!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) && !$address->getPostcode())
-            throw new OmnivaException("Incorrect XML data provided in contact section: postcode is required.");
-        if(in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) && !$address->getOffloadPostcode())
-            throw new OmnivaException("Incorrect XML data provided in contact section: offloadPostcode is required, when using services " . print_r(self::ZIP_NOT_REQUIRED_SERVICES, true) . ".");
-        if(!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) && !$address->getDeliveryPoint())
-            throw new OmnivaException("Incorrect XML data provided in contact section: delivery point is required.");
+		$address_type = $sender ? 'sender' : 'receiver';
+        if((!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) || $sender) && !$address->getPostcode())
+            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: postcode is required.");
+        if(in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) && !$sender && !$address->getOffloadPostcode())
+            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: offloadPostcode is required, when using services " . print_r(self::ZIP_NOT_REQUIRED_SERVICES, true) . ".");
+        if((!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) || $sender) && !$address->getDeliveryPoint())
+            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: delivery point is required.");
         if(!$address->getCountry())
-            throw new OmnivaException("Incorrect XML data provided in contact section: country is required.");
+            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: country is required.");
     }
 }
