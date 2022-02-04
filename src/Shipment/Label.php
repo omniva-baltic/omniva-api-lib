@@ -87,7 +87,7 @@ class Label
             if ($mode === 'S') {
                 return $pdf->Output($mode, $name . '.pdf');
             }
-            return $pdf->Output($mode, $name . '.pdf');
+            $pdf->Output($mode, $name . '.pdf');
         }
         return false;
     }
