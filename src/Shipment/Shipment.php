@@ -362,9 +362,13 @@ class Shipment
 
             // Additional package services.
             $additionalServices = $package->getAdditionalServices();
-            foreach ($additionalServices as $additionalService) {
+            if(!empty($additionalServices))
+            {
                 $addService = $item->addChild('add_service');
-                $addService->addChild('option')->addAttribute('code', $additionalService->getServiceCode());
+                foreach ($additionalServices as $additionalService)
+                {
+                    $addService->addChild('option')->addAttribute('code', $additionalService->getServiceCode());
+                }
             }
 
             // Package measurement data.
