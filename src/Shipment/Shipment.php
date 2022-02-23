@@ -88,157 +88,6 @@ class Shipment
         return $this->request->call($this->toXml()->asXML());
     }
 
-    private function getLabelHeaderXml($headerData)
-    {
-        if(!isset($headerData['sender_cd'])) {
-            throw new OmnivaException("Incorrect XML data provided: Sender ID (sender_cd) is required.");
-        }
-        $attributes = [
-            'sender_cd' => $headerData['sender_cd'],
-            'file_id' => isset($headerData['file_id']) ? $headerData['file_id'] : '',
-            'prep_date_time' => isset($headerData['file_id']) ? $headerData['file_id'] : '',
-        ];
-        return $this->helper->extendTagWithAttributes('header', $attributes);
-    }
-
-    private function getItemListXml($itemListData)
-    {
-        $itemListAttributes = [
-            'show_return_code_sms' => isset($itemListData['show_return_code_sms']) && $itemListData['show_return_code_sms'],
-            'show_return_code_email' => isset($itemListData['show_return_code_email']) && $itemListData['show_return_code_email'],
-            'partnerId' => isset($itemListData['partnerId']) && $itemListData['partnerId'],
-        ];
-        $xml = $this->helper->extendTagWithAttributes('item_list', $itemListAttributes, false);
-        if(isset($itemListData['comment']))
-            $xml .= $this->getCommentXml($itemListData['comment']);
-        $xml .= $this->getItemsXml();
-
-        $xml .= '</item_list>';
-        return $xml;
-    }
-
-    private function getCommentXml($comment)
-    {
-        return "<comment>${comment}</comment>";
-    }
-
-    public function getItemsXml($itemsData)
-    {
-        if (!isset($itemsData['service']))
-            throw new OmnivaException("Incorrect XML data provided in: Item service code is required.");
-        $itemAttributes = [
-            'id' => isset($itemsData['id']) ? $itemsData['id'] : '',
-            'service' => $itemsData['service'],
-            'packetUnitIdentificator' => isset($itemsData['packetUnitIdentificator']) ? $itemsData['packetUnitIdentificator'] : '',
-        ];
-
-        $itemTag = $this->helper->extendTagWithAttributes('item', $itemAttributes, false);
-
-        $xml = '';
-        foreach ($itemsData['packages'] as $package)
-        {
-            $xml .= $itemTag;
-            $additional_services = [];
-            if(isset($package['additional_services']))
-            {
-                $additional_services = $package['additional_services'];
-                $this->getAdditionalServicesXml($additional_services);
-            }
-            if(!isset($package['measures_data']))
-                throw new OmnivaException("Incorrect XML data provided: Measurement data is required.");
-
-            $xml .= $this->getMeasuresXml($package['measures_data']);
-
-            $xml .= $this->getMonetaryXml($additional_services, $package['monetary_data']);
-
-            if(!isset($itemsData['receiver_contacts']))
-                throw new OmnivaException("Incorrect XML data provided: receiver address data is required.");
-
-            if(!isset($itemsData['sender_contacts']))
-                throw new OmnivaException("Incorrect XML data provided: sender address data is required.");
-
-            $xml .= $this->getContactXml('receiver', $itemsData['receiver_contacts']);
-            $xml .= $this->getContactXml('sender', $itemsData['sender_contacts']);
-            $xml .= '</item>';
-        }
-        return $xml;
-    }
-
-    private function getAdditionalServicesXml($serviceData)
-    {
-        $xml = '<add_service>';
-        if(is_array($serviceData) && !empty($serviceData))
-        {
-            foreach ($serviceData as $serviceDatum)
-            {
-                if(isset($serviceDatum['code']))
-                    $xml .= "<option =\"${$serviceDatum['code']}\">";
-            }
-        }
-        $xml .= '</add_service>';
-        return $xml;
-    }
-
-    private function getMeasuresXml($measuresData)
-    {
-        if(!isset($measuresData['weight']))
-            throw new OmnivaException("Incorrect XML data provided in Measures section: weight is required.");
-        $measuresAttributes = [
-            'weight' => $measuresData['weight'],
-            'length' => isset($measuresData['length']) ? $measuresData['length'] : 0,
-            'width' => isset($measuresData['width']) ? $measuresData['width'] : 0,
-            'height' => isset($measuresData['height']) ? $measuresData['height'] : 0,
-        ];
-        return $this->helper->extendTagWithAttributes('measures', $measuresAttributes);
-
-    }
-
-    private function getContactXml($type, $contactData)
-    {
-        if(!in_array($type, self::CONTACT_TYPES))
-        {
-            throw new OmnivaException("Incorrect contact type provided in Label::getContactXml. Allowed types: " . print_r(self::CONTACT_TYPES, true));
-        }
-        if(isset($contactData['person_name']))
-            throw new OmnivaException("Incorrect XML data provided in ${$type} contact section: person_name is required.");
-        // todo: Postal code; Usually required. Not required when the destination is the
-        //parcel machine or Estonian post office (look at offloadPostcode).//NB!
-        if(isset($contactData['postcode']))
-            throw new OmnivaException("Incorrect XML data provided in ${$type} contact section: postcode is required.");
-        if(isset($contactData['offloadPostcode']))
-            throw new OmnivaException("Incorrect XML data provided in ${$type} contact section: offloadPostcode is required.");
-        if(isset($contactData['deliverypoint']))
-            throw new OmnivaException("Incorrect XML data provided in ${$type} contact section: deliverypoint is required.");
-        if(isset($contactData['country']))
-            throw new OmnivaException("Incorrect XML data provided in ${$type} contact section: country is required.");
-
-        // Start building XML.
-        $contactTag = self::CONTACT_TYPES[$type];
-        $xml = "<${$contactTag}>";
-        $xml .= "<person_name>${$contactData['person_name']}</person_name>";
-
-        $address = $contactData['address'];
-        $addressAttributes = [
-            'postcode' => $address['postcode'],
-            'offloadPostcode' => $address['offloadPostcode'],
-            'deliverypoint' => $address['deliverypoint'],
-            'street' => $address['street'],
-            'country' => $address['country'],
-        ];
-        $addressTag = $this->helper->extendTagWithAttributes('address', $addressAttributes);
-        $xml .= $addressTag;
-
-        if(isset($contactData['phone']))
-            $xml .= "<phone>${$contactData['phone']}</phone>";
-        if(isset($contactData['mobile']))
-            $xml .= "<mobile>${$contactData['mobile']}</mobile>";
-        if(isset($contactData['email']))
-            $xml .= "<email>${$contactData['email']}</email>";
-
-        $xml .= "</${$contactTag}>";
-        return $xml;
-    }
-
     /**
      * @return array
      */
@@ -427,6 +276,9 @@ class Shipment
             if ($receiverAddressee->getMobile()) {
                 $receiverAddresseeNode->addChild('mobile', $receiverAddressee->getMobile());
             }
+            if ($receiverAddressee->getEmail()) {
+                $receiverAddresseeNode->addChild('email', $receiverAddressee->getEmail());
+            }
             $address = $receiverAddressee->getAddress();
             $addressNode = $receiverAddresseeNode->addChild('address');
             if($address->getPostcode()) {
@@ -466,22 +318,6 @@ class Shipment
             }
             $addressNode->addAttribute('country', $address->getCountry());
         }
-        return $xml;
-    }
-
-    private function getMonetaryXml($monetaryData, $services)
-    {
-        if(array_search('BP', $services) !== false && !isset($monetaryData['amount']))
-            throw new OmnivaException("Incorrect XML data provided in Monetary section: amount is required, when additional service BP is used.");
-        if(array_search('BP', $services) !== false && !isset($monetaryData['account']))
-            throw new OmnivaException("Incorrect XML data provided in Monetary section: account is required, when additional service BP is used.");
-        $xml = '<monetary_values>';
-        $xml .= '<values code="item_value" amount="' . $monetaryData['amount'] . '"/>
-                <account>' . $monetaryData['account'] . '</account>';
-        if(isset($monetaryData['reference_number']))
-            $xml .= '<reference_number>' . $monetaryData['reference_number'] . '</reference_number>';
-        $xml .= '</monetary_values>';
-
         return $xml;
     }
 }

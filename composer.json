@@ -2,7 +2,7 @@
     "name": "mijora/omniva-api",
     "description": "Omniva API wrapper",
     "type": "library",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "authors": [
         {
             "name": "Modestas",
