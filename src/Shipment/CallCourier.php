@@ -18,6 +18,13 @@ class CallCourier
      */
     private $sender;
     
+    /**
+     * destinationCountry
+     *
+     * @var string
+     */
+    private $destinationCountry;
+    
     /*
      * @var string
      */
@@ -94,12 +101,13 @@ class CallCourier
             $pickDay = date('Y-m-d', strtotime($pickDay . "+1 days"));
         }
         $shop_address = $this->sender->getAddress();
+        $serviceCode = $this->getServiceCode();
         $xml = '
         <interchange msg_type="info11">
             <header file_id="' . \Date('YmdHms') . '" sender_cd="' . $this->request->getUsername() . '" >    
             </header>
             <item_list>
-                <item service="QH" >
+                <item service="' . $serviceCode .'" >
                     <measures weight="1" />
                     <receiverAddressee >
                        <person_name>' . $this->sender->getPersonName() . '</person_name>
@@ -123,4 +131,42 @@ class CallCourier
         return $xml;
     }
 
+    private function getServiceCode()
+    {
+        if($this->destinationCountry == 'estonia')
+        {
+            return 'CI';
+        }
+        elseif($this->destinationCountry == 'finland')
+        {
+            return 'CE';
+        }
+        
+        return 'QH';
+    }
+
+
+    /**
+     * Get destinationCountry
+     *
+     * @return  string
+     */ 
+    public function getDestinationCountry()
+    {
+        return $this->destinationCountry;
+    }
+
+    /**
+     * Set destinationCountry
+     *
+     * @param  string  $destinationCountry  destinationCountry
+     *
+     * @return  self
+     */ 
+    public function setDestinationCountry($destinationCountry)
+    {
+        $this->destinationCountry = $destinationCountry;
+
+        return $this;
+    }
 }
