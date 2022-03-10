@@ -85,10 +85,10 @@ class Manifest
         $pdf->writeHTML($sign, true, false, false, false, '');
 
         if ($mode === 'S') {
-            return $pdf->Output($name . '.pdf', $mode);
+            return $pdf->Output($mode, $name . '.pdf');
         }
 
-        $pdf->Output( $name . '.pdf', $mode);
+        $pdf->Output($mode, $name . '.pdf');
     }
 
 }
