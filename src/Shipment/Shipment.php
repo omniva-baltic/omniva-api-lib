@@ -48,7 +48,7 @@ class Shipment
      * @var array
      */
     private $terminalServices = [
-         'PU', 'PA'
+         'PU', 'PA', 'PK', 'PP'
      ];
     
     public function setAuth($username, $password)
