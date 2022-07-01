@@ -85,7 +85,7 @@ class Request
                       echo "</pre>"; */
                     //exit;
                     $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
-                    $xml = simplexml_load_string($xmlResponse);
+                    $xml = @simplexml_load_string($xmlResponse);
                     if (!is_object($xml)) {
                         $errors[] = 'Response is in the wrong format';
                     }
@@ -227,7 +227,7 @@ class Request
             }
             if (strlen(trim($xmlResponse)) > 0) {
                 $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
-                $xml = simplexml_load_string($xmlResponse);
+                $xml = @simplexml_load_string($xmlResponse);
                 if (!is_object($xml)) {
                     $errors[] = 'Response is in the wrong format';
                 }
