@@ -84,7 +84,7 @@ class Request
                       echo htmlentities($xmlResponse);
                       echo "</pre>"; */
                     //exit;
-                    $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:'], '', $xmlResponse);
+                    $xmlResponse = str_ireplace(['SOAP-ENV:', 'SOAP:', 'ns3:'], '', $xmlResponse);
                     $xml = @simplexml_load_string($xmlResponse);
                     if (!is_object($xml)) {
                         $errors[] = 'Response is in the wrong format';
