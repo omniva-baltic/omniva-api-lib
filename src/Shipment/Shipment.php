@@ -262,6 +262,9 @@ class Shipment
             if($this->isShowReturnCodeEmail()) {
                 $item->addChild('show_return_code_email', true);
             }
+	    if($this->getComment()) {
+                $item->addChild('comment', $this->getComment());
+            }
             if($this->getPartnerId()) {
                 $item->addChild('partnerId', $this->getPartnerId());
             }
