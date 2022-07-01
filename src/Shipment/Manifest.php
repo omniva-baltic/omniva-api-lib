@@ -83,6 +83,12 @@ class Manifest
         $sign = "Courier name, surname, signature" . ' ________________________________________________<br/><br/>';
         $sign .= "Sender name, surname, signature" . ' ________________________________________________';
         $pdf->writeHTML($sign, true, false, false, false, '');
+        
+        
+        if ($mode === 'S') {
+            return $pdf->Output($name . '.pdf', $mode);
+        }
+
         $pdf->Output( $name . '.pdf', $mode);
     }
 
