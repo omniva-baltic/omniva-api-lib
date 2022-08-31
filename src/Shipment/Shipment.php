@@ -225,11 +225,14 @@ class Shipment
             if ($measures) {
 		$measuresNode = $item->addChild('measures');
 		$measuresNode->addAttribute('weight', $measures->getWeight());
-		if ($measures->getWidth()) {
-                    $measuresNode->addAttribute('width', $measures->getWidth());
-		}
 		if ($measures->getVolume()) {
                     $measuresNode->addAttribute('volume', $measures->getVolume());
+		}
+		if ($measures->getLength()) {
+                    $measuresNode->addAttribute('length', $measures->getLength());
+		}
+		if ($measures->getWidth()) {
+                    $measuresNode->addAttribute('width', $measures->getWidth());
 		}
 		if ($measures->getHeight()) {
                     $measuresNode->addAttribute('height', $measures->getHeight());
