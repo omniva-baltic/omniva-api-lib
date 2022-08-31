@@ -27,6 +27,11 @@ class Measures
     private $height;
 
     /**
+     * @var int
+     */
+    private $length;
+
+    /**
      * @return float
      */
     public function getWeight()
@@ -95,6 +100,24 @@ class Measures
     public function setHeight($height)
     {
         $this->height = $height;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLength()
+    {
+        return $this->length;
+    }
+
+    /**
+     * @param int $length
+     * @return Measures
+     */
+    public function setLength($length)
+    {
+        $this->length = $length;
         return $this;
     }
 }

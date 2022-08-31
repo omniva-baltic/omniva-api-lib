@@ -1,3 +1,7 @@
+## [1.0.5] - Updates
+- Added length to measurements
+- Update readme, added examples with comments
+
 ## [1.0.4] - Improvements
 - comment tag moved to correct place
 - manifest supports mode 'S' - return as string
