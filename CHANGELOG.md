@@ -1,3 +1,7 @@
+## [1.0.6.1] - Fixes
+- fixed escaping function for special letters
+- removed vendor directory
+
 ## [1.0.6] - Improvements
 - removed ns3: from all responses
 - added a escaping of sender and receiver values
