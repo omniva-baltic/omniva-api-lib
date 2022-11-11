@@ -1,4 +1,4 @@
-## [Unreleased] - Improvements
+## [1.0.6] - Improvements
 - removed ns3: from all responses
 - added a escaping of sender and receiver values
 
