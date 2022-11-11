@@ -275,55 +275,73 @@ class Shipment
             // Receiver contact data.
             $receiverAddressee = $package->getReceiverContact();
             $receiverAddresseeNode = $item->addChild('receiverAddressee');
-            $receiverAddresseeNode->addChild('person_name', $receiverAddressee->getPersonName());
+            $receiverAddresseeNode->addChild('person_name', $this->escape_value($receiverAddressee->getPersonName()));
             if ($receiverAddressee->getPhone()) {
-                $receiverAddresseeNode->addChild('phone', $receiverAddressee->getPhone());
+                $receiverAddresseeNode->addChild('phone', $this->escape_value($receiverAddressee->getPhone()));
             }
             if ($receiverAddressee->getMobile()) {
-                $receiverAddresseeNode->addChild('mobile', $receiverAddressee->getMobile());
+                $receiverAddresseeNode->addChild('mobile', $this->escape_value($receiverAddressee->getMobile()));
             }
             if ($receiverAddressee->getEmail()) {
-                $receiverAddresseeNode->addChild('email', $receiverAddressee->getEmail());
+                $receiverAddresseeNode->addChild('email', $this->escape_value($receiverAddressee->getEmail(), 'email'));
             }
             $address = $receiverAddressee->getAddress();
             $addressNode = $receiverAddresseeNode->addChild('address');
             if($address->getPostcode()) {
-                $addressNode->addAttribute('postcode', $address->getPostcode());
+                $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
             }
             if($address->getOffloadPostcode() && in_array($package->getService(), $this->terminalServices)) {
                 $addressNode->addAttribute('offloadPostcode', $address->getOffloadPostcode());
             }
             if($address->getDeliverypoint()) {
-                $addressNode->addAttribute('deliverypoint', $address->getDeliverypoint());
+                $addressNode->addAttribute('deliverypoint', $this->escape_value($address->getDeliverypoint()));
             }
             if($address->getStreet()) {
-                $addressNode->addAttribute('street', $address->getStreet());
+                $addressNode->addAttribute('street', $this->escape_value($address->getStreet()));
             }
-            $addressNode->addAttribute('country', $address->getCountry());
+            $addressNode->addAttribute('country', $this->escape_value($address->getCountry()));
 
             // Sender contact data.
             $senderAddressee = $package->getSenderContact();
             $senderAddresseeNode = $item->addChild('returnAddressee');
-            $senderAddresseeNode->addChild('person_name', $senderAddressee->getPersonName());
+            $senderAddresseeNode->addChild('person_name', $this->escape_value($senderAddressee->getPersonName()));
             if ($senderAddressee->getPhone()) {
-                $senderAddresseeNode->addChild('phone', $senderAddressee->getPhone());
+                $senderAddresseeNode->addChild('phone', $this->escape_value($senderAddressee->getPhone()));
             }
             if ($senderAddressee->getMobile()) {
-                $senderAddresseeNode->addChild('mobile', $senderAddressee->getMobile());
+                $senderAddresseeNode->addChild('mobile', $this->escape_value($senderAddressee->getMobile()));
             }
             $address = $senderAddressee->getAddress();
             $addressNode = $senderAddresseeNode->addChild('address');
             if($address->getPostcode()) {
-                $addressNode->addAttribute('postcode', $address->getPostcode());
+                $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
             }
             if($address->getDeliverypoint()) {
                 $addressNode->addAttribute('deliverypoint', $address->getDeliverypoint());
             }
             if($address->getStreet()) {
-                $addressNode->addAttribute('street', $address->getStreet());
+                $addressNode->addAttribute('street', $this->escape_value($address->getStreet()));
             }
-            $addressNode->addAttribute('country', $address->getCountry());
+            $addressNode->addAttribute('country', $this->escape_value($address->getCountry()));
         }
         return $xml;
+    }
+
+    /**
+     * @param string $value
+     * @param string $type
+     * @return string
+     */
+    private function escape_value($value, $type = '')
+    {
+        switch ($type) {
+            case 'email':
+                return filter_var($value, FILTER_SANITIZE_EMAIL);
+                break;
+            default:
+                return htmlentities($value);
+        }
+
+        return $value;
     }
 }
