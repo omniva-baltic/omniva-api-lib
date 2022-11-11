@@ -339,7 +339,7 @@ class Shipment
                 return filter_var($value, FILTER_SANITIZE_EMAIL);
                 break;
             default:
-                return htmlentities($value);
+                return htmlspecialchars($value);
         }
 
         return $value;
