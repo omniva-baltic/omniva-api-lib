@@ -1,3 +1,7 @@
+## [Unreleased]
+### Fixes
+- removed ns3: from all responses
+
 ## [1.0.5] - Updates
 - Added length to measurements
 - Update readme, added examples with comments
