@@ -116,6 +116,10 @@ Use `example/config.php` to enter your API username and password for testing the
     //set packages to shipment, in this case we assign 2 same packeges for shipment
     $shipment->setPackages([$package, $package]);
 
+    //hide return code from customer SMS and email
+    $shipment->setShowReturnCodeSms(false);
+    $shipment->setShowReturnCodeEmail(false);
+
     //set auth data
     $shipment->setAuth($username, $password);
 
