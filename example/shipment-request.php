@@ -77,6 +77,10 @@ try {
     // Simulate multi-package request.
     $shipment->setPackages([$package, $package]);
 
+    // Hide return code showing in customer SMS and email.
+    $shipment->setShowReturnCodeSms(false);
+    $shipment->setShowReturnCodeEmail(false);
+
     //set auth data
     $shipment->setAuth($username, $password);
 

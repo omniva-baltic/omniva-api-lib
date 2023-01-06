@@ -129,7 +129,15 @@ class Shipment
      */
     public function isShowReturnCodeSms()
     {
-        return $this->showReturnCodeSms;
+        return (!is_null($this->showReturnCodeSms));
+    }
+
+    /**
+     * @return string
+     */
+    public function getShowReturnCodeSms()
+    {
+        return $this->showReturnCodeSms ? 'true' : 'false';
     }
 
     /**
@@ -147,7 +155,15 @@ class Shipment
      */
     public function isShowReturnCodeEmail()
     {
-        return $this->showReturnCodeEmail;
+        return (!is_null($this->showReturnCodeEmail));
+    }
+
+    /**
+     * @return string
+     */
+    public function getShowReturnCodeEmail()
+    {
+        return $this->showReturnCodeEmail ? 'true' : 'false';
     }
 
     /**
@@ -260,12 +276,12 @@ class Shipment
             }
             // Non-mandatory 
             if($this->isShowReturnCodeSms()) {
-                $item->addChild('show_return_code_sms', true);
+                $item->addChild('show_return_code_sms', $this->getShowReturnCodeSms());
             }
             if($this->isShowReturnCodeEmail()) {
-                $item->addChild('show_return_code_email', true);
+                $item->addChild('show_return_code_email', $this->getShowReturnCodeEmail());
             }
-	    if($this->getComment()) {
+            if($this->getComment()) {
                 $item->addChild('comment', $this->getComment());
             }
             if($this->getPartnerId()) {

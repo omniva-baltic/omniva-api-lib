@@ -1,3 +1,6 @@
+## [1.0.7] - Fixes
+- fixed syntax of return code showing in customer SMS/email
+
 ## [1.0.6.1] - Fixes
 - fixed escaping function for special letters
 - removed vendor directory
