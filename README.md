@@ -12,6 +12,8 @@ Omniva API library, to help to integrate with other systems
 - Courier call, to ask to pickup parcels from shop.
 - List parcel terminals.
 
+## Requirements
+- Minimum PHP 7.0, tested up to PHP 7.4
 
 ## Instalation
 
