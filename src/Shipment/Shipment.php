@@ -209,10 +209,6 @@ class Shipment
         if($header->getPrepDateTime()) {
             $head->addAttribute('prep_date_time', $header->getPrepDateTime());
         }
-        
-        if($this->getComment()) {
-            $head->addChild('comment', $this->getComment());
-        }
 
         $itemList = $xml->addChild('item_list');
         
@@ -274,15 +270,15 @@ class Shipment
                     $item->addChild('reference_number', $cod->getReferenceNumber());
                 }
             }
-            // Non-mandatory 
+            // Non-mandatory
+            if($this->getComment()) {
+                $item->addChild('comment', $this->getComment());
+            }
             if($this->isShowReturnCodeSms()) {
                 $item->addChild('show_return_code_sms', $this->getShowReturnCodeSms());
             }
             if($this->isShowReturnCodeEmail()) {
                 $item->addChild('show_return_code_email', $this->getShowReturnCodeEmail());
-            }
-            if($this->getComment()) {
-                $item->addChild('comment', $this->getComment());
             }
             if($this->getPartnerId()) {
                 $item->addChild('partnerId', $this->getPartnerId());

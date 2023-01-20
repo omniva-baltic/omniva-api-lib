@@ -1,3 +1,6 @@
+## [Unreleased] - Fixes
+- fixed comment section in Shipment XML request building
+
 ## [1.0.7] - Fixes
 - fixed syntax of return code showing in customer SMS/email
 
