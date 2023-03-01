@@ -123,7 +123,7 @@ class CallCourier
                        <person_name>' . $this->sender->getPersonName() . '</person_name>
                        <phone>' . ($this->sender->getPhone() ?? $this->sender->getMobile()) . '</phone>
                        <address postcode="' . $shop_address->getPostCode() . '" deliverypoint="' . $shop_address->getDeliveryPoint() . '" country="' .  $shop_address->getCountry(). '" street="' . $shop_address->getStreet() . '" />
-                       <pick_up_time start="' . date("c", strtotime($pickDay . ' ' . $pickStart)) . '" finish="' . date("c", strtotime($pickDay . ' ' . $pickFinish)) . '"/>
+                       <pick_up_time start="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickStart)) . '" finish="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickFinish)) . '"/>
                     </onloadAddressee>
                 </item>
             </item_list>
