@@ -1,4 +1,4 @@
-## [Unreleased] - Fixes
+## [1.0.8] - Fixes
 - fixed comment section in Shipment XML request building
 - fixed courier pickup time format in requests
 
