@@ -29,16 +29,26 @@ class Request
     private $api_url = 'https://edixml.post.ee';
 
     /*
+     * Debuging
+     */
+    private $debug = false;
+    private $debug_request = '';
+    private $debug_response = '';
+    private $debug_url = '';
+    private $debug_http_code = 0;
+
+    /*
      * @param string $username
      * @param string @password
      * @param string $api_url
      */
-    public function __construct($username, $password, $api_url = 'https://edixml.post.ee')
+    public function __construct($username, $password, $api_url = 'https://edixml.post.ee', $debug = false)
     {
         $this->helper = new Helper();
         $this->username = $username;
         $this->password = $password;
         $this->api_url = $api_url;
+        $this->debug = $debug;
     }
 
     /*
@@ -73,49 +83,25 @@ class Request
             $url = $this->api_url . "/epmx/services/messagesService.wsdl";
 
             $xmlResponse = $this->make_call($xml, $url);
-            
-            if ($xmlResponse === false) {
-                $errors[] = "Error in xml request";
-            } else {
-                $errorTitle = '';
-                if (strlen(trim($xmlResponse)) > 0) {
-                    /*
-                      echo "<pre>";
-                      echo htmlentities($xmlResponse);
-                      echo "</pre>"; */
-                    //exit;
-                    $xmlResponse = $this->clear_xml_response($xmlResponse);
-                    $xml = @simplexml_load_string($xmlResponse);
-                    if (!is_object($xml)) {
-                        $errors[] = 'Response is in the wrong format';
-                    }
-                    if (is_object($xml) && is_object($xml->Body->businessToClientMsgResponse->faultyPacketInfo->barcodeInfo)) {
-                        foreach ($xml->Body->businessToClientMsgResponse->faultyPacketInfo->barcodeInfo as $data) {
-                            $errors[] = $data->clientItemId . ' - ' . $data->barcode . ' - ' . $data->message;
-                        }
-                    }
-                    if (empty($errors)) {
-                        if (is_object($xml) && is_object($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo)) {
-                            foreach ($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo as $data) {
-                                $barcodes[] = (string) $data->barcode;
-                            }
-                        }
-                        if (empty($barcodes)) {
-                            $errors[] = 'No barcodes received';
-                        }
-                    }
-                } else {
-                    $errors[] = 'Response is in the wrong format';
-                }
+            $xml = $this->convert_response_to_xml($xmlResponse);
+
+            foreach ($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo as $data) {
+                $barcodes[] = (string) $data->barcode;
             }
 
-            if (!empty($barcodes)) {
-                return array('barcodes' => $barcodes);
-            } else {
-                throw new OmnivaException(implode('. ', $this->helper->translateErrors($errors)));
+            if ( empty($barcodes) ) {
+                throw new OmnivaException('Error in XML request');
             }
+
+            $message = (is_object($xml->Body->businessToClientMsgResponse->prompt)) ? $xml->Body->businessToClientMsgResponse->prompt->__toString() : '';
+
+            return array(
+                'barcodes' => $barcodes,
+                'message' => $message,
+                'debug' => $this->get_debug_data()
+            );
         } catch (\Exception $e) {
-            throw new OmnivaException($e->getMessage());
+            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
         }
     }
 
@@ -162,8 +148,19 @@ class Request
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
         $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+
+        $this->debug_url = $url;
+        $this->debug_http_code = $http_code;
+        $this->debug_request = $xml;
+        $this->debug_response = $response;
+
+        if ( $http_code == '0' ) {
+            throw new OmnivaException('Bad API URL', $this->get_debug_data());
+        }
         return $response;
     }
 
@@ -198,6 +195,54 @@ class Request
         $dom->loadXML($xml);
 
         $this->validateSchema($dom);
+    }
+
+    /*
+     * @param string $xmlResponse
+     * @return object
+     */
+    private function convert_response_to_xml( $xmlResponse )
+    {
+        if ( $xmlResponse === false || strlen(trim($xmlResponse)) <= 0 ) {
+            throw new OmnivaException('Error in XML request', $this->get_debug_data());
+        }
+
+        $xmlResponse = $this->clear_xml_response($xmlResponse);
+        $xml = @simplexml_load_string($xmlResponse);
+
+        if ( ! is_object($xml) ) {
+            $this->get_response_not_object_error($xmlResponse);
+        }
+
+        if ( is_object($xml->Body->businessToClientMsgResponse->faultyPacketInfo->barcodeInfo) ) {
+            $errors = array();
+            foreach ( $xml->Body->businessToClientMsgResponse->faultyPacketInfo->barcodeInfo as $data ) {
+                $errors[] = $data->clientItemId . ' - ' . $data->barcode . ' - ' . $data->message;
+            }
+            if ( ! empty($errors) ) {
+                throw new OmnivaException(implode('. ', $this->helper->translateErrors($errors)), $this->get_debug_data());
+            }
+        }
+
+        if ( ! is_object($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo) ) {
+            throw new OmnivaException('No barcodes received', $this->get_debug_data());
+        }
+
+        return $xml;
+    }
+
+    /*
+     * @param string $xmlResponse
+     */
+    private function get_response_not_object_error( $xmlResponse )
+    {
+        if ( strpos($xmlResponse, 'HTTP Status 401') !== false
+            && strpos($xmlResponse, 'This request requires HTTP authentication.') !== false
+        ) {
+            throw new OmnivaException('Bad API logins', $this->get_debug_data());
+        }
+        
+        throw new OmnivaException('Response is in the wrong format', $this->get_debug_data());
     }
 
     /*
@@ -257,7 +302,7 @@ class Request
                 throw new OmnivaException(implode('. ', $this->helper->translateErrors($errors)));
             }
         } catch (\Exception $e) {
-            throw new OmnivaException($e->getMessage());
+            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
         }
     }
 
@@ -277,7 +322,7 @@ class Request
                 throw new \Exception('Wrong response received');
             }
         } catch (\Exception $e) {
-            throw new OmnivaException($e->getMessage());
+            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
         }
         return $xml;
     }
@@ -300,4 +345,50 @@ class Request
         return true;
     }
 
+    /*
+     * @param string $url
+     */
+    private function set_debug_url( $url )
+    {
+        $this->debug_url = $url;
+    }
+
+    /*
+     * @param string|integer $http_code
+     */
+    private function set_debug_http_code( $http_code )
+    {
+        $this->debug_http_code = $http_code;
+    }
+
+    /*
+     * @param string $request
+     */
+    private function set_debug_request( $request )
+    {
+        $this->debug_request = $request;
+    }
+
+    /*
+     * @param string $response
+     */
+    private function set_debug_response( $response )
+    {
+        $this->debug_response = $response;
+    }
+
+    /*
+     * @return array
+     */
+    public function get_debug_data()
+    {
+        if ( ! $this->debug ) return array();
+
+        return array(
+            'url' => $this->debug_url,
+            'code' => $this->debug_http_code,
+            'request' => $this->debug_request,
+            'response' => $this->debug_response,
+        );
+    }
 }

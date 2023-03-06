@@ -35,6 +35,10 @@ class CallCourier
      */
     private $latestPickupTime = '17:00';
 
+    private $parcelsNumber = 1;
+
+    private $debugData = array();
+
     /* 
      * @param string $time
      * @return CallCourier
@@ -55,6 +59,17 @@ class CallCourier
         return $this;
     }
 
+    public function setParcelsNumber($number)
+    {
+        $this->parcelsNumber = ($number > 0) ? $number : 1;
+        return $this;
+    }
+
+    public function getParcelsNumber()
+    {
+        return $this->parcelsNumber;
+    }
+
     /* 
      * @param Contact $sender
      * @return CallCourier
@@ -70,8 +85,8 @@ class CallCourier
      * @param string $password
      * @param string $api_url
      */
-    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee') {
-        $this->request = new Request($username, $password, $api_url);
+    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee', $debug = false) {
+        $this->request = new Request($username, $password, $api_url, $debug);
     }
 
     /*
@@ -83,6 +98,10 @@ class CallCourier
             throw new OmnivaException("Please set username and password");
         }
         $result = $this->request->call($this->buildXml());
+
+        if (isset($result['debug'])) {
+            $this->setDebugData($result['debug']);
+        }
         if (isset($result['barcodes']) && !empty($result['barcodes'])) {
             return true;
         }
@@ -97,7 +116,7 @@ class CallCourier
         $pickStart = $this->earliestPickupTime;
         $pickFinish = $this->latestPickupTime;
         $pickDay = date('Y-m-d');
-        if (time() > strtotime($pickDay . ' ' . $pickFinish)) {
+        if (time() > strtotime($pickDay . ' ' . $pickStart)) {
             $pickDay = date('Y-m-d', strtotime($pickDay . "+1 days"));
         }
         $shop_address = $this->sender->getAddress();
@@ -106,7 +125,9 @@ class CallCourier
         <interchange msg_type="info11">
             <header file_id="' . \Date('YmdHms') . '" sender_cd="' . $this->request->getUsername() . '" >    
             </header>
-            <item_list>
+            <item_list>';
+        for ( $i = 0; $i < $this->getParcelsNumber(); $i++ ) {
+            $xml .= '
                 <item service="' . $serviceCode .'" >
                     <measures weight="1" />
                     <receiverAddressee >
@@ -125,7 +146,9 @@ class CallCourier
                        <address postcode="' . $shop_address->getPostCode() . '" deliverypoint="' . $shop_address->getDeliveryPoint() . '" country="' .  $shop_address->getCountry(). '" street="' . $shop_address->getStreet() . '" />
                        <pick_up_time start="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickStart)) . '" finish="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickFinish)) . '"/>
                     </onloadAddressee>
-                </item>
+                </item>';
+        }
+        $xml .= '
             </item_list>
         </interchange>';
         return $xml;
@@ -145,6 +168,17 @@ class CallCourier
         return 'QH';
     }
 
+    private function setDebugData( $debug_data )
+    {
+        $this->debugData = $debug_data;
+
+        return $this;
+    }
+
+    public function getDebugData()
+    {
+        return $this->debugData;
+    }
 
     /**
      * Get destinationCountry
