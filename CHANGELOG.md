@@ -1,4 +1,4 @@
-## [Unreleased] - Improvements
+## [1.0.9] - Improvements
 - added a ability to debug request
 - fixed error message when API credentials is wrong
 - fixed error message when API URL is wrong
