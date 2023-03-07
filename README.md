@@ -197,7 +197,6 @@ Use `example/config.php` to enter your API username and password for testing the
 
     use Mijora\Omniva\OmnivaException;
     use Mijora\Omniva\Shipment\CallCourier;
-    use Mijora\Omniva\Shipment\Order;
     use Mijora\Omniva\Shipment\Package\Address;
     use Mijora\Omniva\Shipment\Package\Contact;
 
@@ -212,16 +211,21 @@ Use `example/config.php` to enter your API username and password for testing the
     //pickup contact data
     $senderContact = new Contact();
     $senderContact
-            ->setAddress($address) //add address
+            ->setAddress($address) //assign pickup address object
             ->setMobile('+37060000000') //set phone
             ->setPersonName('Stefan Dexter'); //set full name of sender
     
     //call courier object
     $call = new CallCourier();
-    $call->setAuth($username, $password); //set auth info
+    $call->setAuth($username, $password, $api_url, true); //set auth info. Username (required), password (required), API url (optional), debug (optional)
     $call->setSender($senderContact); //assign pickup address
+    $call->setEarliestPickupTime('08:00'); //set pickup start time
+    $call->setLatestPickupTime('17:00'); //set picktup end time
+    $call->setDestinationCountry('estonia'); //indicate which country's service to use. estonia - use CI, finland - use CE, any other - use QH
+    $call->setParcelsNumber(3); //specify how many packages will be handed over to the courier
     
     $result = $call->callCourier(); //make a call, if returned true - courier called successfully
+    $debug_data = $call->getDebugData(); //return debug data which contain URL, HTTP code, request and response
 
 ```
 
