@@ -8,7 +8,7 @@ class Package
 {
     const COD_ADDITIONAL_SERVICE_CODE = 'BP';
 
-    const ZIP_NOT_REQUIRED_SERVICES = ['PA', 'PU', 'PK', 'PV', 'PO', 'PP'];
+    const ZIP_NOT_REQUIRED_SERVICES = ['PA', 'PU', 'PV', 'PO', 'PP'];
 
     /**
      * @var string

@@ -1,3 +1,6 @@
+## [Unreleased]
+- removed PK service from "required offload postcode" services list
+
 ## [1.0.9] - Improvements
 - added a ability to debug request
 - fixed error message when API credentials is wrong
