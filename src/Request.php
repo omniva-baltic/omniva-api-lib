@@ -225,6 +225,9 @@ class Request
         }
 
         if ( ! is_object($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo) ) {
+            if ( is_object($xml->Body->businessToClientMsgResponse->prompt) ) {
+                throw new OmnivaException((string) $xml->Body->businessToClientMsgResponse->prompt, $this->get_debug_data());
+            }
             throw new OmnivaException('No barcodes received', $this->get_debug_data());
         }
 
