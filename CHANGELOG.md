@@ -1,3 +1,6 @@
+## [Unreleased]
+- centralized terminal services getting
+
 ## [1.0.10] - Fixes
 - removed PK service from "required offload postcode" services list
 - added error message display when error message is written in prompt element

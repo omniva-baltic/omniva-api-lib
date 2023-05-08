@@ -3,13 +3,10 @@
 namespace Mijora\Omniva\Shipment\Package;
 
 use Mijora\Omniva\OmnivaException;
+use Mijora\Omniva\Shipment\Shipment;
 
 class Package
 {
-    const COD_ADDITIONAL_SERVICE_CODE = 'BP';
-
-    const ZIP_NOT_REQUIRED_SERVICES = ['PA', 'PU', 'PV', 'PO', 'PP'];
-
     /**
      * @var string
      */
@@ -210,7 +207,7 @@ class Package
     {
         foreach ($this->additionalServices as $additionalService)
         {
-            if($additionalService->getServiceCode() == self::COD_ADDITIONAL_SERVICE_CODE)
+            if($additionalService->getServiceCode() == Shipment::ADDITIONAL_SERVICES['cod'])
                 return true;
         }
         return false;
@@ -219,11 +216,11 @@ class Package
     public function validateAddress($address, $sender = false)
     {
 		$address_type = $sender ? 'sender' : 'receiver';
-        if((!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) || $sender) && !$address->getPostcode())
+        if((!in_array($this->service, Shipment::TERMINAL_SERVICES) || $sender) && !$address->getPostcode())
             throw new OmnivaException("Incorrect XML data provided in $address_type contact section: postcode is required.");
-        if(in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) && !$sender && !$address->getOffloadPostcode())
-            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: offloadPostcode is required, when using services " . print_r(self::ZIP_NOT_REQUIRED_SERVICES, true) . ".");
-        if((!in_array($this->service, self::ZIP_NOT_REQUIRED_SERVICES) || $sender) && !$address->getDeliveryPoint())
+        if(in_array($this->service, Shipment::TERMINAL_SERVICES) && !$sender && !$address->getOffloadPostcode())
+            throw new OmnivaException("Incorrect XML data provided in $address_type contact section: offloadPostcode is required, when using services " . print_r(Shipment::TERMINAL_SERVICES, true) . ".");
+        if((!in_array($this->service, Shipment::TERMINAL_SERVICES) || $sender) && !$address->getDeliveryPoint())
             throw new OmnivaException("Incorrect XML data provided in $address_type contact section: delivery point is required.");
         if(!$address->getCountry())
             throw new OmnivaException("Incorrect XML data provided in $address_type contact section: country is required.");
