@@ -9,6 +9,10 @@ class Shipment
 {
     const CONTACT_TYPES = ['receiver' => 'receiverAddressee', 'sender' => 'returnAddressee'];
 
+    const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP'];
+
+    const ADDITIONAL_SERVICES = ['cod' => 'BP'];
+
     /**
      * @var ShipmentHeader
      */
@@ -43,13 +47,6 @@ class Shipment
      * @var Request
      */
     private $request;
-    
-    /**
-     * @var array
-     */
-    private $terminalServices = [
-         'PU', 'PA', 'PK', 'PP'
-     ];
     
     public function setAuth($username, $password)
     {
@@ -302,7 +299,7 @@ class Shipment
             if($address->getPostcode()) {
                 $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
             }
-            if($address->getOffloadPostcode() && in_array($package->getService(), $this->terminalServices)) {
+            if($address->getOffloadPostcode() && in_array($package->getService(), self::TERMINAL_SERVICES)) {
                 $addressNode->addAttribute('offloadPostcode', $address->getOffloadPostcode());
             }
             if($address->getDeliverypoint()) {
