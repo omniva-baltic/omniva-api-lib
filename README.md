@@ -70,48 +70,47 @@ Use `example/config.php` to enter your API username and password for testing the
     //set package size and weight
     $measures = new Measures();
     $measures
-            ->setWeight(6.6) //weight in kg, required
-            ->setLength(9) //dimension in meter, optional
-            ->setHeight(2) //dimension in meter, optional
-            ->setWidth(3); //dimension in meter, optional
+            ->setWeight(6.689) //weight in kg, required
+            ->setLength(0.9) //dimension in meter, optional
+            ->setHeight(0.25) //dimension in meter, optional
+            ->setWidth(1); //dimension in meter, optional
     $package->setMeasures($measures); //set package measurements
 
     //set COD, optional
     $cod = new Cod();
     $cod
-            ->setAmount(66.7) //set cod amount
+            ->setAmount(66.72) //set cod amount
             ->setBankAccount('GB33BUKB20201555555555') //set bank account
             ->setReceiverName('Test Company') //set company name
             ->setReferenceNumber('23232323232323'); //set reference number of cod
     $package->setCod($cod); //assign cod to package
 
-    //receiver contact object
-    $receiverContact = new Contact();
-    //receiver address object
-    $address = new Address();
-    $address
-            ->setCountry('LT') //set country code
-            ->setPostcode('72201') //set postcode
-            ->setDeliverypoint('city') //set city
-            ->setOffloadPostcode('72203') //set terminal post code if sending to parcel terminal
-            ->setStreet('Guobu g.'); //set street
+    //set sender and reeiver address
+    $receiverContact = new Contact(); //receiver contact object
+    $receiverAddress = new Address(); //receiver address object
+    $receiverAddress
+            ->setCountry('LT') //set country code (2 letters)
+            ->setPostcode('72201') //set postcode (LT, EE and FI are "00000", for LV the format is "LV-0000")
+            ->setDeliverypoint('Kaunas') //set city and state (up to 80 chars)
+            ->setOffloadPostcode('68594') //set terminal code if sending to parcel terminal
+            ->setStreet('Guobu g. 5-266'); //set street, house and apartment number (up to 80 chars)
     $receiverContact
-            ->setAddress($address) //assign address to receiver
+            ->setAddress($receiverAddress) //assign address to receiver
             ->setEmail('test@test.lt') //set receiver email
-            ->setMobile('+37060000000') //set receiver phone
+            ->setMobile('+37060000000') //set receiver phone (recommended in international format)
             ->setPersonName('Moby Simpson'); //set receiver full name
     $package->setReceiverContact($receiverContact); //assign receiver to package
 
     $senderContact = new Contact(); //sender contact object
-    $address = new Address(); //sender address object
-    $s_address
-            ->setCountry('LT') //set country code
-            ->setPostcode('72201') //set postcode
-            ->setDeliverypoint('city') //set city
-            ->setStreet('Guobu g.'); //set street
+    $senderAddress = new Address(); //sender address object
+    $senderAddress
+            ->setCountry('LV') //set country code (2 letters)
+            ->setPostcode('LV-1234') //set postcode (LT, EE and FI are "00000", for LV the format is "LV-0000")
+            ->setDeliverypoint('Riga') //set city and state (up to 80 chars)
+            ->setStreet('Pils iela 3'); //set street, house and apartment number (up to 80 chars)
     $senderContact
-            ->setAddress($_address) //assign address to sender
-            ->setMobile('+37060000000') //set sender phone
+            ->setAddress($senderAddress) //assign address to sender
+            ->setMobile('+37125700000') //set sender phone
             ->setPersonName('Stefan Dexter'); //set sender full name
     $package->setSenderContact($senderContact); //assign sender to package
 
