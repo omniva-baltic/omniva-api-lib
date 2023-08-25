@@ -1,0 +1,4 @@
+/vendor/
+/example/*.pdf
+*.log
+/composer.lock
