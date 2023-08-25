@@ -2,7 +2,7 @@
 
 namespace Mijora\Omniva\Shipment\Package;
 
-use Mijora\Omniva\OmnivaException;
+use Mijora\Omniva\Helper;
 
 class Contact
 {
@@ -10,6 +10,11 @@ class Contact
      * @var string
      */
     private $personName;
+    
+    /**
+     * @var string
+     */
+    private $companyName;
 
     /**
      * @var Address
@@ -46,6 +51,24 @@ class Contact
     public function setPersonName($personName)
     {
         $this->personName = $personName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompanyName()
+    {
+        return $this->companyName;
+    }
+
+    /**
+     * @param string $companyName
+     * @return Contact
+     */
+    public function setCompanyName($companyName)
+    {
+        $this->companyName = $companyName;
         return $this;
     }
 
@@ -119,5 +142,28 @@ class Contact
     {
         $this->email = $email;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAddresseeForOmx($delivery_channel = null)
+    {
+        $addressee = [
+            'address' => $this->getAddress()->getAddressForOmx($delivery_channel),
+            'contactEmail' => Helper::escapeForApi($this->getEmail(), Helper::ESCAPE_FOR_API_TYPE_EMAIL),
+            'contactMobile' => Helper::escapeForApi($this->getMobile()),
+            'personName' => Helper::escapeForApi($this->getPersonName()),
+        ];
+
+        if ($this->getPhone()) {
+            $addressee['contactPhone'] = Helper::escapeForApi($this->getPhone());
+        }
+
+        if ($this->getCompanyName()) {
+            $addressee['companyName'] = Helper::escapeForApi($this->getCompanyName());
+        }
+
+        return $addressee;
     }
 }

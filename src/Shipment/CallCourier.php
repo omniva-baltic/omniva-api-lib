@@ -4,6 +4,9 @@ namespace Mijora\Omniva\Shipment;
 
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Request;
+use Mijora\Omniva\Shipment\Package\Contact;
+use Mijora\Omniva\Shipment\Request\CallCourierOmxRequest;
+use Mijora\Omniva\Shipment\Request\CancelCourierOmxRequest;
 
 class CallCourier
 {
@@ -89,11 +92,72 @@ class CallCourier
         $this->request = new Request($username, $password, $api_url, $debug);
     }
 
-    /*
-     * @return boolean
-     */
-    public function callCourier()
+    public function getCallCourierOmxRequest()
     {
+        return (new CallCourierOmxRequest())
+            ->setCustomerCode($this->request->getUsername())
+            ->setPickupContact($this->sender)
+            ->setStartTime()
+            ->setEndTime()
+            ->setComment()
+            ->setPackageCount($this->getParcelsNumber())
+        ;
+    }
+
+    /**
+     * @return string|bool Returns courier call order number, that can be used for cancelation. Returns false on failure.
+     */
+    public function callCourierOmx()
+    {
+        $request = $this->getCallCourierOmxRequest();
+
+        $response = json_decode((string) $this->request->callOmxApi($request), true);
+
+        /* RESPONSE EXAMPLE
+            {
+                "courierOrderNumber": "4141146",
+                "startTime": "2023-03-30T20:18:00",
+                "endTime": "2023-03-30T20:19:00"
+            }
+        */
+
+        return $response['courierOrderNumber'] ?? false;
+    }
+
+    /**
+     * @return bool Returns if courier order was succesfully canceled.
+     */
+    public function cancelCourierOmx($courier_order_number)
+    {
+        $request = (new CancelCourierOmxRequest())
+            ->setCustomerCode($this->request->getUsername())
+            ->setCourierOrderNumber($courier_order_number)
+        ;
+
+        $response = json_decode((string) $this->request->callOmxApi($request), true);
+
+        /* RESPONSE EXAMPLE
+            {
+                "courierOrderNumber": "4141146",
+                "resultCode": "OK"
+            }
+        */
+
+        $result = $response['resultCode'] ?? '';
+
+        return strtoupper($result) === 'OK';
+    }
+
+    /**
+     * @return string|boolean
+     */
+    public function callCourier($use_legacy_api = true)
+    {
+        // for now default use legacy is set to true as there is issues with new endpoint
+        if (!$use_legacy_api) {
+            return $this->callCourierOmx();
+        }
+
         if (empty($this->request)) {
             throw new OmnivaException("Please set username and password");
         }

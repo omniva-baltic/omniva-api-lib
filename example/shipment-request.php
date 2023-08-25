@@ -37,9 +37,9 @@ try {
     $measures = new Measures();
     $measures
             ->setWeight(6.6)
-            ->setVolume(9)
-            ->setHeight(2)
-            ->setWidth(3);
+            ->setVolume(0.9)
+            ->setHeight(0.2)
+            ->setWidth(0.3);
     $package->setMeasures($measures);
 
     //set COD
@@ -58,10 +58,12 @@ try {
             ->setCountry('LT')
             ->setPostcode('72201')
             ->setDeliverypoint('city')
-            ->setOffloadPostcode('72203')
+        //     ->setOffloadPostcode('72203')
+            ->setOffloadPostcode('55583')
             ->setStreet('Guobu g.');
     $receiverContact
             ->setAddress($address)
+            ->setMobile('+37061111111')
             ->setEmail('onmiva@mgail.com')
             ->setPersonName('Moby Simpson');
     $package->setReceiverContact($receiverContact);
@@ -71,6 +73,7 @@ try {
     $senderContact
             ->setAddress($address)
             ->setMobile('+37060000000')
+            ->setEmail('sender@test.com')
             ->setPersonName('Stefan Dexter');
     $package->setSenderContact($senderContact);
 
