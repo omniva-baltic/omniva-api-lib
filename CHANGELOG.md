@@ -1,5 +1,9 @@
 ## [Unreleased]
 - centralized terminal services getting
+- added barcode image display in manifest
+- added order number to manifest
+- added the possibility to change the manifest strings
+- added the possibility to change the manifest columns width
 
 ## [1.0.10] - Fixes
 - removed PK service from "required offload postcode" services list
