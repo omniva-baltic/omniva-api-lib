@@ -33,7 +33,22 @@ try {
     
     
     $manifest = new Manifest();
-    $manifest->setSender($senderContact);
+    $manifest
+        ->setSender($senderContact)
+        ->showBarcode(false)
+        ->setSignatureLineLength(40)
+        ->setColumnLength('row_number', 20)
+        ->setColumnLength('order_number', 40)
+        ->setString('sender_address', 'Sender address')
+        ->setString('row_number', 'No.')
+        ->setString('shipment_number', 'Shipment number')
+        ->setString('order_number', 'Order No.')
+        ->setString('date', 'Date')
+        ->setString('quantity', 'Quantity')
+        ->setString('weight', 'Weight (kg)')
+        ->setString('recipient_address', "Recipient's name and address")
+        ->setString('courier_signature', 'Courier name, surname, signature')
+        ->setString('sender_signature', 'Sender name, surname, signature');
     
     foreach ($barcodes as $barcode) {
         $order = new Order();

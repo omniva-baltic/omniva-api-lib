@@ -173,8 +173,12 @@ Use `example/config.php` to enter your API username and password for testing the
             ->setPersonName('Stefan Dexter'); //set sender full name
     
     $manifest = new Manifest(); //new manifest object
-    $manifest->setSender($senderContact); //add sender contact
-    
+    $manifest
+            ->setSender($senderContact) //add sender contact
+            ->showBarcode(false) //disable barcode image display
+            ->setSignatureLineLength(40) //change the length of the signature line
+            ->setString('sender_address', 'Shop address') //change string in manifest. First value is string key. Available keys: sender_address, row_number, shipment_number, order_number, date, quantity, weight, recipient_address, courier_signature, sender_signature
+            ->setColumnLength('row_number', 20); //change orders table column width. First value is column key. Available keys: row_number, shipment_number, order_number, date, quantity, weight, recipient_address
     
     $order = new Order(); //new order object
     $order->setTracking('BK000000000LT'); //set tracking number
