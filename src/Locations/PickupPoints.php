@@ -72,7 +72,7 @@ class PickupPoints
                 {
                     if(!isset($location[$filter_key]))
                     {
-                        throw new OmnivaException("Incorrect filter key: ${filter_key}.");
+                        throw new OmnivaException('Incorrect filter key: ' . $filter_key);
                     }
                     elseif (strtolower($location[$filter_key]) != strtolower($filter))
                     {
