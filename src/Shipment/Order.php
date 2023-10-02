@@ -6,7 +6,12 @@ use Mijora\Omniva\OmnivaException;
 
 class Order
 {
-     /**
+    /**
+     * @var string
+     */
+    private $order_number;
+
+    /**
      * @var string
      */
     private $tracking;
@@ -26,6 +31,23 @@ class Order
      */
     private $receiver;
 
+    /**
+     * @return string
+     */
+    public function getOrderNumber()
+    {
+        return $this->order_number;
+    }
+
+    /**
+     * @param string $order_number
+     * @return Order
+     */
+    public function setOrderNumber($order_number)
+    {
+        $this->order_number = $order_number;
+        return $this;
+    }
 
     /**
      * @return string
