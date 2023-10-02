@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.11] - Improvements
 - centralized terminal services getting
 - added barcode image display in manifest
 - added order number to manifest
