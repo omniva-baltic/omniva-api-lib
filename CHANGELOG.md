@@ -1,3 +1,7 @@
+## [Unreleased]
+- added additional services map for each shipping service
+- added the email adding to sender
+
 ## [1.0.11] - Improvements
 - centralized terminal services getting
 - added barcode image display in manifest
