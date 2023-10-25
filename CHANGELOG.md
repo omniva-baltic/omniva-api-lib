@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.13] - Improvements
 - to services map added QH and QL services
 - services CD and CE are marked as having terminals
 
