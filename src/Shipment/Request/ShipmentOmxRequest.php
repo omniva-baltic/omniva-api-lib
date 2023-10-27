@@ -27,7 +27,7 @@ class ShipmentOmxRequest implements OmxRequestInterface
     /** @var Package[] */
     private $consolidation_packages = [];
 
-    public function addShipment(Package $package, Shipment $legacy_shipment)
+    public function addShipment(Package $package)
     {
         $main_service = $package->getMainService();
 
@@ -43,7 +43,7 @@ class ShipmentOmxRequest implements OmxRequestInterface
             $shipment = [
                 'mainService' => $main_service,
                 'deliveryChannel' => $package->getChannel(),
-                'shipmentComment' => $legacy_shipment->getComment(),
+                'shipmentComment' => $package->getComment(),
                 'returnAllowed' => $package->getReturnAllowed(),
                 'paidByReceiver' => $package->getPaidByReceiver(),
                 'partnerShipmentId' => $package_id,

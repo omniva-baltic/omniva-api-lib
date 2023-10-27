@@ -294,7 +294,10 @@ class Shipment
         
         $packages = $this->getPackages();
         foreach ($packages as $package) {
-            $omxRequest->addShipment($package, $this);
+            // legacy comment was on main shipment
+            $package->setComment($this->getComment());
+
+            $omxRequest->addShipment($package);
         }
 
         return $omxRequest;
