@@ -23,6 +23,9 @@
     "autoload": {
         "psr-4": {
             "Mijora\\Omniva\\": "src/"
-        }
+        },
+        "files": [
+            "overrides/tcpdf/tcpdf_config.php"
+        ]
     }
 }

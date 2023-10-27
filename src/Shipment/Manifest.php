@@ -20,7 +20,7 @@ class Manifest
     /**
      * @var boolean
      */
-    private $show_barcode = true;
+    private $show_barcode = false;
 
     /**
      * @var array
