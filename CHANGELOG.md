@@ -1,3 +1,6 @@
+## [1.0.14] - Fixes
+- fixed barcode show in manifest
+
 ## [1.0.13] - Improvements
 - to services map added QH and QL services
 - services CD and CE are marked as having terminals
