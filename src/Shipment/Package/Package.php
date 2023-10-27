@@ -47,7 +47,8 @@ class Package
         self::MAIN_SERVICE_PARCEL => [
             self::CHANNEL_COURIER,
             self::CHANNEL_PARCEL_MACHINE,
-            self::CHANNEL_POST_OFFICE
+            self::CHANNEL_POST_OFFICE,
+            self::CHANNEL_PICK_UP_POINT
         ],
 
         self::MAIN_SERVICE_LETTER => [], // currently not used
@@ -73,6 +74,13 @@ class Package
     const LEGACY_SERVICES_TERMINAL = [
         'PA', 'PU', 'PP',
         'PV',
+    ];
+
+    /**
+     * Legacy codes for delivery to Pickup Point
+     */
+    const LEGACY_SERVICES_PICK_UP_POINT = [
+        'CD',
     ];
 
     /**
@@ -222,6 +230,9 @@ class Package
             } elseif (in_array($main_service, self::LEGACY_SERVICES_TERMINAL)) { // Parcel - Parcel Machine
                 $main_service = self::MAIN_SERVICE_PARCEL;
                 $channel = self::CHANNEL_PARCEL_MACHINE;
+            } elseif (in_array($main_service, self::LEGACY_SERVICES_PICK_UP_POINT)) { // Parcel - Pickup Point
+                $main_service = self::MAIN_SERVICE_PARCEL;
+                $channel = self::CHANNEL_PICK_UP_POINT;
             } elseif (in_array($main_service, self::LEGACY_SERVICES_POST_OFFICE)) { // Parcel - Post office
                 $main_service = self::MAIN_SERVICE_PARCEL;
                 $channel = self::CHANNEL_POST_OFFICE;
