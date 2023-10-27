@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.14] - Fixes
 - fixed barcode show in manifest
 
 ## [1.0.13] - Improvements
