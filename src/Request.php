@@ -424,6 +424,13 @@ class Request
             throw new OmnivaException('Unauthorized! Check credentials', $this->get_debug_data());
         }
 
+        // OMX API on 400 (Bad Request) returns json body with erorrs
+        if ($http_code === 400) {
+            $error_msg = $this->parseOmx400Response($response);
+
+            throw new OmnivaException('Bad Request ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->get_debug_data());
+        }
+
         if ($http_code === 404 || ($http_code >= 500 && $http_code < 600)) {
             // OMX API on 500 and 404 returns json body with different structure for error
             $error_msg = $this->parseOmx500Response($response);
@@ -436,6 +443,61 @@ class Request
         }
 
         return $response;
+    }
+
+    /**
+     * Parses 400 (Bad Request) OMX API Error response
+     * 
+     * @param string $response
+     * 
+     * @return string Generated error message
+     */
+    private function parseOmx400Response($response)
+    {
+        /**
+         * example 400 error response:
+         * 
+         * {
+         *      "title": "Validation Failed",
+         *      "path": "/api/v01/omx/courierorders/create-pickup-order",
+         *      "details": "Input validation failed",
+         *      "code": "",
+         *      "timestamp": 1698220666378,
+         *      "developerMessage": "org.springframework.web.bind.MethodArgumentNotValidException",
+         *      "errors": {
+         *          "startTime": [
+         *              {
+         *                  "code": "Future",
+         *                  "message": "must be a future date"
+         *              }
+         *          ]
+         *      }
+         *  }
+         */
+        $error_response = @json_decode($response, true);
+
+        if (!$error_response) {
+            return null;
+        }
+
+        $errors = $error_response['errors'] ?? [];
+        $errors_parsed = [];
+        foreach ($errors as $key => $array) {
+            if (!$array) {
+                continue;
+            }
+
+            $error_msgs = [];
+            foreach ($array as $error) {
+                if ($error['message'] ?? false) {
+                    $error_msgs[] = $error['message'];
+                }
+            }
+
+            $errors_parsed[] = $key . ': ' . implode(', ', $error_msgs);
+        }
+
+        return ($error_response['title'] ?? '') . ': ' . ($error_response['details'] ?? '') . ' - ' . implode(', ', $errors_parsed);
     }
 
     /**
