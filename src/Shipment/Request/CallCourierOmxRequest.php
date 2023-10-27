@@ -8,9 +8,7 @@ class CallCourierOmxRequest implements OmxRequestInterface
 {
     const API_ENDPOINT = 'courierorders/create-pickup-order';
 
-    const SERVICE_COURIER_PICKUP = 'COURIER_PICKUP';
-
-    const SERVICE_TWO_COURIER_PICKUP = 'TWO_COURIER_PICKUP';
+    const LIMIT_COMMENT_LENGTH = 120;
 
     /** @var string PARTNER_CODE (AXA Code) of the Customer, agreed upon previously. MANDATORY */
     private $customerCode;
@@ -26,9 +24,15 @@ class CallCourierOmxRequest implements OmxRequestInterface
 
     /** @var string */
     private $startTime = '8:00';
-    
+
     /** @var string */
     private $endTime = '17:00';
+
+    /** @var bool FALSE (default) or TRUE (If any of the packages are >30kg ) */
+    private $isTwoManPickup = false;
+
+    /** @var bool Default value is false*/
+    private $isHeavyPackage = false;
 
     public function setCustomerCode($code)
     {
@@ -46,7 +50,11 @@ class CallCourierOmxRequest implements OmxRequestInterface
 
     public function setComment($comment = '')
     {
-        $this->comment = $comment;
+        $this->comment = mb_substr(
+            strip_tags($comment),
+            0,
+            self::LIMIT_COMMENT_LENGTH
+        );
 
         return $this;
     }
@@ -68,6 +76,20 @@ class CallCourierOmxRequest implements OmxRequestInterface
     public function setEndTime($time = '17:00')
     {
         $this->endTime = $time;
+
+        return $this;
+    }
+
+    public function setIsHeavyPackage($isHeavyPackage = false)
+    {
+        $this->isHeavyPackage = (bool) $isHeavyPackage;
+
+        return $this;
+    }
+
+    public function setIsTwoManPickup($isTwoManPickup = false)
+    {
+        $this->isTwoManPickup = (bool) $isTwoManPickup;
 
         return $this;
     }
@@ -100,9 +122,9 @@ class CallCourierOmxRequest implements OmxRequestInterface
         if (time() > strtotime($pickDay . ' ' . $this->startTime)) {
             $pickDay = date('Y-m-d', strtotime($pickDay . "+1 days"));
         }
-        // "2023-03-30T20:18:00.000"
-        $start = date("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->startTime)) . '.000';
-        $finish = date("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->endTime)) . '.000';
+        // "2023-03-30T20:18:00.000" - using gmdate to convert server time to UTC
+        $start = gmdate("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->startTime)) . '.000';
+        $finish = gmdate("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->endTime)) . '.000';
         /* Pickup time data calculations end */
 
         $body = [
@@ -115,10 +137,10 @@ class CallCourierOmxRequest implements OmxRequestInterface
                 'country' => $address->getCountry(),
                 'street' => $address->getStreet(),
             ],
-            'startTime' => $start,//"2023-03-30T20:18:00.000",
-            'endTime' => $finish,//"2023-03-30T20:19:00.000",
-            'isTwoManPickup' => false,
-            'isHeavyPackage' => false,
+            'startTime' => $start, //"2023-03-30T20:18:00.000",
+            'endTime' => $finish, //"2023-03-30T20:19:00.000",
+            'isTwoManPickup' => $this->isTwoManPickup,
+            'isHeavyPackage' => $this->isHeavyPackage,
             'packageCount' => $this->packageCount > 1 ? $this->packageCount : 1,
         ];
 

@@ -26,7 +26,16 @@ class CallCourier
      *
      * @var string
      */
-    private $destinationCountry;
+     private $destinationCountry;
+    
+    /** @var string Comment for courier. OMX Only */
+    private $comment;
+    
+    /** @var bool Flag to mark a need of two man pick up. OMX Only */
+    private $isTwoManPickup = false;
+    
+    /** @var bool Flag to mark there is packages heavier than 30Kg. OMX Only */
+    private $isHeavyPackage = false;
     
     /*
      * @var string
@@ -83,24 +92,83 @@ class CallCourier
         return $this;
     }
 
-    /*
+    /**
+     * Adds comment to courier. OMX only
+     * 
+     * @param string $comment Comment for courier
+     * 
+     * @return CallCourier
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+        return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * OMX only
+     * 
+     * @param bool $isHeavyPackage Default FALSE
+     * 
+     * @return CallCourier
+     */
+    public function setIsHeavyPackage($isHeavyPackage = false)
+    {
+        $this->isHeavyPackage = (bool) $isHeavyPackage;
+
+        return $this;
+    }
+
+    /**
+     * OMX only
+     * 
+     * @param bool $isTwoManPickup Default FALSE
+     * 
+     * @return CallCourier
+     */
+    public function setIsTwoManPickup($isTwoManPickup = false)
+    {
+        $this->isTwoManPickup = (bool) $isTwoManPickup;
+
+        return $this;
+    }
+
+    /**
      * @param string $username
      * @param string $password
      * @param string $api_url
+     * 
+     * @return CallCourier
      */
     public function setAuth($username, $password, $api_url = 'https://edixml.post.ee', $debug = false) {
         $this->request = new Request($username, $password, $api_url, $debug);
+        return $this;
     }
 
+    /**
+     * Creates OMX Request object from current CallCourer information
+     * 
+     * @return CallCourierOmxRequest
+     */
     public function getCallCourierOmxRequest()
     {
         return (new CallCourierOmxRequest())
             ->setCustomerCode($this->request->getUsername())
             ->setPickupContact($this->sender)
-            ->setStartTime()
-            ->setEndTime()
-            ->setComment()
+            ->setStartTime($this->earliestPickupTime)
+            ->setEndTime($this->latestPickupTime)
+            ->setComment($this->getComment())
             ->setPackageCount($this->getParcelsNumber())
+            ->setIsHeavyPackage($this->isHeavyPackage)
+            ->setIsTwoManPickup($this->isTwoManPickup)
         ;
     }
 
@@ -149,11 +217,12 @@ class CallCourier
     }
 
     /**
+     * @var bool $use_legacy_api Default FALSE to use OMX API, using TRUE switches to old XML request
+     * 
      * @return string|boolean
      */
-    public function callCourier($use_legacy_api = true)
+    public function callCourier($use_legacy_api = false)
     {
-        // for now default use legacy is set to true as there is issues with new endpoint
         if (!$use_legacy_api) {
             return $this->callCourierOmx();
         }
