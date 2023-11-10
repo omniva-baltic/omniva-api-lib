@@ -578,10 +578,10 @@ class Package
         }
 
         // Insurance -> INSURANCE
-        $insurance = ['BI'];
-        if (in_array($legacy_code, $insurance)) {
-            return (new InsuranceService());
-        }
+        // $insurance = ['BI'];
+        // if (in_array($legacy_code, $insurance)) {
+        //     return (new InsuranceService());
+        // }
 
         // For now ignore this as legacy didnt have values here
         // Personal Delivery -> DELIVERY_TO_A_SPECIFIC_PERSON
