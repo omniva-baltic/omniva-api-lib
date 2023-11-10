@@ -37,6 +37,9 @@ class CallCourier
     /** @var bool Flag to mark there is packages heavier than 30Kg. OMX Only */
     private $isHeavyPackage = false;
     
+    /** @var array|bool Holds call response body - on failed call will be FALSE. OMX Only */
+    private $response;
+    
     /*
      * @var string
      */
@@ -114,7 +117,7 @@ class CallCourier
     }
 
     /**
-     * OMX only
+     * OMX only. Marks there is packages heavier than 30Kg.
      * 
      * @param bool $isHeavyPackage Default FALSE
      * 
@@ -128,7 +131,7 @@ class CallCourier
     }
 
     /**
-     * OMX only
+     * OMX only. Marks a need of two man pick up.
      * 
      * @param bool $isTwoManPickup Default FALSE
      * 
@@ -139,6 +142,54 @@ class CallCourier
         $this->isTwoManPickup = (bool) $isTwoManPickup;
 
         return $this;
+    }
+
+    /**
+     * OMX only
+     * 
+     * Return call response body parsed as array (if was succesfull) or false. Before call it will be NULL
+     * 
+     * @return array|bool|null
+     */
+    public function getResponseBody()
+    {
+        return $this->response;
+    }
+
+    /**
+     * OMX only
+     * 
+     * Return time start from response. If no response or it was with errors return NULL
+     * 
+     * @return array|bool|null
+     */
+    public function getResponseTimeStart()
+    {
+        return $this->response['startTime'] ?? null;
+    }
+
+    /**
+     * OMX only
+     * 
+     * Return time end from response. If no response or it was with errors return NULL
+     * 
+     * @return array|bool|null
+     */
+    public function getResponseTimeEnd()
+    {
+        return $this->response['endTime'] ?? null;
+    }
+
+    /**
+     * OMX only
+     * 
+     * Return call number from response. If no response or it was with errors return NULL
+     * 
+     * @return string|null
+     */
+    public function getResponseCallNumber()
+    {
+        return $this->response['courierOrderNumber'] ?? null;
     }
 
     /**
@@ -173,7 +224,9 @@ class CallCourier
     }
 
     /**
-     * @return string|bool Returns courier call order number, that can be used for cancelation. Returns false on failure.
+     * Returns courier call order number, that can be used for cancelation. Returns false on failure.
+     * 
+     * @return string|bool Call order number or FALSE
      */
     public function callCourierOmx()
     {
@@ -189,7 +242,14 @@ class CallCourier
             }
         */
 
-        return $response['courierOrderNumber'] ?? false;
+        $this->response = false;
+        if (!isset($response['courierOrderNumber'])) {
+            return false;
+        }
+
+        $this->response = $response;
+
+        return $this->response['courierOrderNumber'];
     }
 
     /**
