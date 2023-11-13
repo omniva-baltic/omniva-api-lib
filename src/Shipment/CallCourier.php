@@ -262,7 +262,7 @@ class CallCourier
             ->setCourierOrderNumber($courier_order_number)
         ;
 
-        $response = json_decode((string) $this->request->callOmxApi($request), true);
+        $this->response = json_decode((string) $this->request->callOmxApi($request), true);
 
         /* RESPONSE EXAMPLE
             {
@@ -271,7 +271,7 @@ class CallCourier
             }
         */
 
-        $result = $response['resultCode'] ?? '';
+        $result = $$this->response['resultCode'] ?? '';
 
         return strtoupper($result) === 'OK';
     }
