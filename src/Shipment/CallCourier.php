@@ -271,7 +271,7 @@ class CallCourier
             }
         */
 
-        $result = $$this->response['resultCode'] ?? '';
+        $result = $this->response['resultCode'] ?? '';
 
         return strtoupper($result) === 'OK';
     }
