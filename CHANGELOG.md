@@ -1,3 +1,6 @@
+## [1.0.15] - Improvements
+- changed to use local envelope scheme
+
 ## [1.0.14] - Fixes
 - fixed barcode show in manifest
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <xsd:schema xmlns="http://service.core.epmx.application.eestipost.ee/xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://service.core.epmx.application.eestipost.ee/xsd">
-    <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+    <xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="envelope.xsd"/>
     <xsd:element name="receiveInfoMsgRequest" type="ReceiveInfoMsgRequest"/>
     <xsd:element name="receiveInfoMsgResponse" type="ReceiveInfoMsgResponse"/>
     <xsd:complexType name="ReceiveInfoMsgRequest">
