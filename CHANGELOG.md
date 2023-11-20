@@ -1,4 +1,4 @@
-## [Unreleased] - Improvements
+## [1.0.15] - Improvements
 - changed to use local envelope scheme
 
 ## [1.0.14] - Fixes
