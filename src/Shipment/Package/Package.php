@@ -179,7 +179,7 @@ class Package
     public function setComment($comment)
     {
         $this->comment = mb_substr(
-            strip_tags((string)$comment),
+            strip_tags((string) $comment),
             0,
             self::LIMIT_COMMENT_LENGTH
         );
