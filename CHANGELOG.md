@@ -1,3 +1,7 @@
+## [Unreleased]
+- fixed server URl change
+- improved server URL management
+
 ## [1.0.15] - Improvements
 - changed to use local envelope scheme
 
