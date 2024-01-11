@@ -26,7 +26,12 @@ class Request
     /*
      * @var string
      */
-    private $api_url = 'https://edixml.post.ee';
+    private $api_url_domain = 'https://edixml.post.ee';
+
+    /*
+     * @var string
+     */
+    private $api_url_path = '/epmx/services/messagesService.wsdl';
 
     /*
      * Debuging
@@ -47,7 +52,7 @@ class Request
         $this->helper = new Helper();
         $this->username = $username;
         $this->password = $password;
-        $this->api_url = $api_url;
+        $this->setApiUrlDomain($api_url);
         $this->debug = $debug;
     }
 
@@ -60,12 +65,58 @@ class Request
     }
 
     /*
+     * @return string
+     */
+    private function getPassword()
+    {
+        return $this->password;
+    }
+
+    /*
+     * @param string $urlDomain
+     */
+    public function setApiUrlDomain($urlDomain)
+    {
+        $this->api_url_domain = $urlDomain;
+        return $this;
+    }
+
+    /*
+     * @return string
+     */
+    public function getApiUrlDomain()
+    {
+        return $this->api_url_domain;
+    }
+
+    /*
+     * @param string $urlPath
+     */
+    public function setApiUrlPath($urlPath)
+    {
+        $this->api_url_path = $urlPath;
+        return $this;
+    }
+
+    /*
      * @param string $url
      */
     public function setApiUrl($url)
     {
-        $this->api_url = $url;
+        $parsedUrl = parse_url($url);
+
+        $this->setApiUrlDomain($parsedUrl['scheme'] . '://' . $parsedUrl['host']);
+        $this->setApiUrlPath($parsedUrl['path']);
+
         return $this;
+    }
+
+    /*
+     * @return string
+     */
+    public function getApiUrl()
+    {
+        return $this->api_url_domain . $this->api_url_path;
     }
 
     /*
@@ -80,7 +131,7 @@ class Request
         try {
             $barcodes = array();
             $errors = array();
-            $url = $this->api_url . "/epmx/services/messagesService.wsdl";
+            $url = $this->getApiUrl();
 
             $xmlResponse = $this->make_call($xml, $url);
             $xml = $this->convert_response_to_xml($xmlResponse);
@@ -175,7 +226,7 @@ class Request
             <soapenv:Header/>
             <soapenv:Body>
                 <xsd:businessToClientMsgRequest>
-                    <partner>' . $this->username . '</partner>';
+                    <partner>' . $this->getUsername() . '</partner>';
         $xml .= preg_replace("/<\\?xml.*\\?>/", '', $request, 1);
         $xml .= '
                 </xsd:businessToClientMsgRequest>
@@ -264,7 +315,7 @@ class Request
            <soapenv:Header/>
            <soapenv:Body>
               <xsd:addrcardMsgRequest>
-                 <partner>' . $this->username . '</partner>
+                 <partner>' . $this->getUsername() . '</partner>
                  <sendAddressCardTo>response</sendAddressCardTo>
                  <barcodes>
                     ' . $barcodeXML . '
@@ -275,7 +326,7 @@ class Request
 
         try {
             $errors = array();
-            $url = $this->api_url . "/epmx/services/messagesService.wsdl";
+            $url = $this->getApiUrl();
 
             $xmlResponse = $this->make_call($xml, $url);
             
@@ -314,7 +365,7 @@ class Request
      */
     public function getTracking()
     {
-        $url = $this->api_url . '/epteavitus/events/from/' . date("c", strtotime("-1 week +1 day")) . '/for-client-code/' . $this->username;
+        $url = $this->getApiUrlDomain() . '/epteavitus/events/from/' . date("c", strtotime("-1 week +1 day")) . '/for-client-code/' . $this->getUsername();
         
         $xmlResponse = $this->make_call(false, $url);
         

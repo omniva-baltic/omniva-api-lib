@@ -88,9 +88,9 @@ class Shipment
      */
     private $request;
     
-    public function setAuth($username, $password)
+    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee', $debug = false)
     {
-        $this->request = new Request($username, $password);
+        $this->request = new Request($username, $password, $api_url, $debug);
     }
 
     /**
