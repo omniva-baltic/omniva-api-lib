@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.16] - Fixes
 - fixed server URl change
 - improved server URL management
 
