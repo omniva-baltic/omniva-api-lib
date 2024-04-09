@@ -1,3 +1,6 @@
+## [Unreleased]
+- added error message when receiving a "401 Unauthorized" error
+
 ## [1.0.16] - Fixes
 - fixed server URl change
 - improved server URL management

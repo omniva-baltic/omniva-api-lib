@@ -212,6 +212,9 @@ class Request
         if ( $http_code == '0' ) {
             throw new OmnivaException('Bad API URL', $this->get_debug_data());
         }
+        if ( $http_code == '401' ) {
+            throw new OmnivaException('Unauthorized - Problem with API logins', $this->get_debug_data());
+        }
         return $response;
     }
 
