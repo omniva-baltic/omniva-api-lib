@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.17] - Improvements
 - added error message when receiving a "401 Unauthorized" error
 - added debug to all functions in Request class
 - added enableDebug function in Request class
