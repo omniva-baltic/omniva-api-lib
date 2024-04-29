@@ -130,7 +130,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get shipment label
-
 ```php
 
     use Mijora\Omniva\OmnivaException;
@@ -150,7 +149,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get manifest
-
 ```php
 
     use Mijora\Omniva\OmnivaException;
@@ -195,7 +193,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Call courier for pickup
-
 ```php
 
     use Mijora\Omniva\OmnivaException;
@@ -233,7 +230,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get list of parcel terminals
-
 ```php
 
     use Mijora\Omniva\Locations\PickupPoints;
@@ -246,7 +242,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get tracking information
-
 ```php
 
     use Mijora\Omniva\Shipment\Tracking;
