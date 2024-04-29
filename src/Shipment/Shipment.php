@@ -10,6 +10,7 @@ class Shipment
     const CONTACT_TYPES = ['receiver' => 'receiverAddressee', 'sender' => 'returnAddressee'];
 
     const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP', 'CE', 'CD'];
+    const MULTIPARCELS_SERVICES = ['PK', 'QH', 'DD', 'DE', 'CI', 'LX', 'LH', 'CN', 'CE'];
 
     const ADDITIONAL_SERVICES = ['cod' => 'BP'];
 
@@ -280,12 +281,16 @@ class Shipment
 
         // Add all packaged to item list.
         $packages = $this->getPackages();
+        $mpsPackages = $this->calcMpsPackages();
         foreach ($packages as $package) {
             $item = $itemList->addChild('item');
             if ($package->getService()) {
                 $item->addAttribute('service', $package->getService());
             }
-            if ($package->getId()) {
+            if ($package->getId() && $mpsPackages[$package->getId()] > 1) {
+                if (!in_array($package->getService(), self::MULTIPARCELS_SERVICES)) {
+                    throw new OmnivaException("Multi-parcel shipment is not available for selected service");
+                }
                 $item->addAttribute('packetUnitIdentificator', $package->getId());
             }
 
@@ -408,6 +413,23 @@ class Shipment
             $addressNode->addAttribute('country', $this->escapeValue($address->getCountry()));
         }
         return $xml;
+    }
+
+    /**
+     * @return array
+     */
+    private function calcMpsPackages()
+    {
+        $mpsPackages = array();
+        $packages = $this->getPackages();
+        foreach ($packages as $package) {
+            if ( ! isset($mpsPackages[$package->getId()]) ) {
+                $mpsPackages[$package->getId()] = 0;
+            }
+            $mpsPackages[$package->getId()]++;
+        }
+
+        return $mpsPackages;
     }
 
     /**
