@@ -1,5 +1,12 @@
 ## [Unreleased]
 - added error message when receiving a "401 Unauthorized" error
+- added debug to all functions in Request class
+- added enableDebug function in Request class
+- unified names of all functions in Request class
+- deprecated function get_labels() in Request class. Replaced with getLabels().
+- deprecated function get_debug_data() in Request class. Replaced with getDebugData().
+- when initializing the Request class, all parameters became unnecessary, as the possibility to add them through separate functions was created
+- added possibility to register multi-parcels shipments (MPS)
 
 ## [1.0.16] - Fixes
 - fixed server URl change
