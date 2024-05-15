@@ -1,3 +1,7 @@
+## [Unreleased]
+- fixed filtering of locations by type
+- adapted to work with PHP 5.6
+
 ## [1.0.17] - Improvements
 - added error message when receiving a "401 Unauthorized" error
 - added debug to all functions in Request class
