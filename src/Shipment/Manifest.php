@@ -134,7 +134,7 @@ class Manifest
             $count++;
             $cell_shipment_number = '<td width="' . $this->column_lengths['shipment_number'] . '">' . $order->getTracking() . '</td>';
             if ($this->show_barcode) {
-                $cell_shipment_number = '<td width="' . $this->column_lengths['shipment_number'] . '" style="line-height: 50%;"><tcpdf method="write1DBarcode" params="' . $pdf->serializeTCPDFtagParameters($this->getBarcodeParams($order->getTracking())) . '" /></td>';
+                $cell_shipment_number = '<td width="' . $this->column_lengths['shipment_number'] . '" style="line-height: 50%;"><tcpdf data="' . $pdf->serializeTCPDFtag('write1DBarcode', $this->getBarcodeParams($order->getTracking())) . '" /></td>';
             }
             $order_table .= '<tr>
                 <td width = "' . $this->column_lengths['row_number'] . '" align="right">' . $count . '.</td>
