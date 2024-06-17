@@ -57,7 +57,7 @@ class PickupPoints
         $filters = [];
         if($country)
             $filters['A0_NAME'] = $country;
-        if($type)
+        if($type !== '')
             $filters['TYPE'] = $type;
         if($county)
             $filters['A1_NAME'] = $county;

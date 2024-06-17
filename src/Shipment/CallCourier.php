@@ -120,6 +120,7 @@ class CallCourier
             $pickDay = date('Y-m-d', strtotime($pickDay . "+1 days"));
         }
         $shop_address = $this->sender->getAddress();
+        $shop_phone = (! empty($this->sender->getPhone())) ? $this->sender->getPhone() : $this->sender->getMobile();
         $serviceCode = $this->getServiceCode();
         $xml = '
         <interchange msg_type="info11">
@@ -132,17 +133,17 @@ class CallCourier
                     <measures weight="1" />
                     <receiverAddressee >
                        <person_name>' . $this->sender->getPersonName() . '</person_name>
-                       <phone>' . ($this->sender->getPhone() ?? $this->sender->getMobile()) . '</phone>
+                       <phone>' . $shop_phone . '</phone>
                        <address postcode="' . $shop_address->getPostCode() . '" deliverypoint="' . $shop_address->getDeliveryPoint() . '" country="' .  $shop_address->getCountry() . '" street="' . $shop_address->getStreet() . '" />
                     </receiverAddressee>
                     <returnAddressee>
                        <person_name>' . $this->sender->getPersonName() . '</person_name>
-                       <phone>' . ($this->sender->getPhone() ?? $this->sender->getMobile()) . '</phone>
+                       <phone>' . $shop_phone . '</phone>
                        <address postcode="' . $shop_address->getPostCode() . '" deliverypoint="' . $shop_address->getDeliveryPoint() . '" country="' .  $shop_address->getCountry() . '" street="' . $shop_address->getStreet() . '" />
                     </returnAddressee>
                     <onloadAddressee>
                        <person_name>' . $this->sender->getPersonName() . '</person_name>
-                       <phone>' . ($this->sender->getPhone() ?? $this->sender->getMobile()) . '</phone>
+                       <phone>' . $shop_phone . '</phone>
                        <address postcode="' . $shop_address->getPostCode() . '" deliverypoint="' . $shop_address->getDeliveryPoint() . '" country="' .  $shop_address->getCountry(). '" street="' . $shop_address->getStreet() . '" />
                        <pick_up_time start="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickStart)) . '" finish="' . date("Y.m.d H:i", strtotime($pickDay . ' ' . $pickFinish)) . '"/>
                     </onloadAddressee>
