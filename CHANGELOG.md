@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.18] - Fixes
 - fixed filtering of locations by type
 - adapted to work with PHP 5.6
 - fixed the barcode show when using TCPDF library version 6.7.4 or newer
