@@ -612,12 +612,73 @@ class Request
         ) {
             throw new OmnivaException('Bad API logins', $this->getDebugData());
         }
-        
+
         throw new OmnivaException('Response is in the wrong format', $this->getDebugData());
     }
 
     /**
-     * @param (array) $barcodes
+     * @param array $barcodes
+     * @param string|null $send_to_email
+     * 
+     * @return mixed
+     */
+    public function getLabelsOmx($barcodes, $send_to_email = null)
+    {
+        $labels = [];
+        $errors = [];
+
+        try {
+            $omx_request = (new PackageLabelOmxRequest())
+                ->addBarcode($barcodes);
+
+            $omx_request->customerCode = $this->username;
+
+            if ($send_to_email) {
+                $omx_request->setEmail($send_to_email);
+            }
+
+            $response = $this->callOmxApi($omx_request);
+
+            $response = json_decode((string) $response, true);
+
+            if (!$response) {
+                throw new OmnivaException('Something went wrong. Bad response format from Omniva API');
+            }
+
+            $success = $response['successAddressCards'] ?? [];
+            foreach ($success as $data) {
+                $barcode = $data['barcode'] ?? null;
+                $fileData = $data['fileData'] ?? null;
+
+                // if sending to email success gives back barcode
+                $labels[$barcode] = $omx_request->isSentToEmail() ? $barcode : $fileData;
+            }
+
+            $failed = $response['failedAddressCards'] ?? [];
+            $errors = array();
+            foreach ($failed as $data) {
+                $barcode = $data['barcode'] ?? null;
+                $errors[] = ($barcode ? $barcode : 'No barcode') . ' - ' . ($data['messageCode'] ?? '');
+            }
+
+            if (!empty($errors)) {
+                throw new OmnivaException(implode('. ', $errors), $this->get_debug_data());
+            }
+
+            if (empty($labels) && empty($errors)) {
+                throw new OmnivaException('Something went wrong. Omniva API did not return barcodes nor errors.');
+            }
+
+            return [
+                'labels' => $labels
+            ];
+        } catch (\Exception $e) {
+            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
+        }
+    }
+
+    /**
+     * @param array $barcodes
      * @return mixed
      */
     public function getLabels( $barcodes )
@@ -690,7 +751,7 @@ class Request
         try {
             $xml = @simplexml_load_string($return);
             if (!is_object($xml)) {
-                throw new \Exception('Wrong response received', $this->getDebugData());
+                throw new OmnivaException('Wrong response received', $this->getDebugData());
             }
         } catch (\Exception $e) {
             throw new OmnivaException($e->getMessage(), $this->getDebugData());
