@@ -59,42 +59,14 @@ class Request
     }
 
     /**
-     * @param (string) $username
-     * @return object
+     * @param string $username
+     * 
+     * @return Request
      */
     public function setUsername( $username )
     {
         $this->username = $username;
         return $this;
-    }
-
-    /**
-     * @param int $seconds
-     * @return Request
-     */
-    public function setCurlTimeout($seconds = 30)
-    {
-        $this->curl_timeout = (int) $seconds;
-
-        return $this;
-    }
-
-    /**
-     * @return Request
-     */
-    public function setUseTestOmxApi($use_test_omx_api = false)
-    {
-        $this->use_test_omx_api = (bool) $use_test_omx_api;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTestOmxApi()
-    {
-        return (bool) $this->use_test_omx_api;
     }
 
     /**
@@ -107,6 +79,7 @@ class Request
 
     /**
      * @param string $password
+     * 
      * @return Request
      */
     public function setPassword( $password )
@@ -125,6 +98,7 @@ class Request
 
     /**
      * @param string $url_domain
+     * 
      * @return Request
      */
     public function setApiUrlDomain( $url_domain )
@@ -143,7 +117,8 @@ class Request
 
     /**
      * @param string $url_path
-     * @return object
+     * 
+     * @return Request
      */
     public function setApiUrlPath( $url_path )
     {
@@ -152,10 +127,19 @@ class Request
     }
 
     /**
+     * @return string
+     */
+    private function getApiUrlPath()
+    {
+        return $this->api_url_path;
+    }
+
+    /**
      * @param string $url
+     * 
      * @return Request
      */
-    public function setApiUrl($url)
+    public function setApiUrl( $url )
     {
         $parsed_url = parse_url($url);
 
@@ -171,6 +155,34 @@ class Request
     public function getApiUrl()
     {
         return $this->api_url_domain . $this->api_url_path;
+    }
+
+    /**
+     * @param int $seconds
+     * 
+     * @return Request
+     */
+    public function setCurlTimeout($seconds = 30)
+    {
+        $this->curl_timeout = (int) $seconds;
+        return $this;
+    }
+
+    /**
+     * @return Request
+     */
+    public function setUseTestOmxApi($use_test_omx_api = false)
+    {
+        $this->use_test_omx_api = (bool) $use_test_omx_api;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTestOmxApi()
+    {
+        return (bool) $this->use_test_omx_api;
     }
 
     /**
@@ -204,10 +216,10 @@ class Request
                 throw new OmnivaException('Something went wrong. Bad response format from Omniva API');
             }
 
-            $saved = $response['savedShipments'] ?? [];
+            $saved = (isset($response['savedShipments'])) ? $response['savedShipments'] : [];
             foreach ($saved as $data) {
-                $clientItemId = $data['clientItemId'] ?? false;
-                $barcode = (string) ($data['barcode'] ?? '');
+                $clientItemId = (isset($data['clientItemId'])) ? $data['clientItemId'] : false;
+                $barcode = (string) ((isset($data['barcode']) ? $data['barcode'] : '');
 
                 if ($clientItemId) {
                     if (!isset($barcodes_mapped[$clientItemId])) {
@@ -219,9 +231,9 @@ class Request
 
                 $barcodes[] = $barcode;
 
-                $consolidated = $data['consolidatedShipments'] ?? [];
+                $consolidated = (isset($data['consolidatedShipments'])) ? $data['consolidatedShipments'] : [];
                 foreach ($consolidated as $consolidated_data) {
-                    $consolidated_barcode = (string) ($consolidated_data['barcode'] ?? '');
+                    $consolidated_barcode = (string) ((isset($consolidated_data['barcode'])) ? $consolidated_data['barcode'] : '');
 
                     $barcodes[] = $consolidated_barcode;
 
@@ -229,15 +241,15 @@ class Request
                 }
             }
 
-            $failed = $response['failedShipments'] ?? [];
+            $failed = (isset($response['failedShipments'])) ? $response['failedShipments'] : [];
             $errors = array();
             foreach ($failed as $data) {
-                $clientItemId = $data['clientItemId'] ?? false;
-                $errors[] = ($clientItemId ? $clientItemId : 'No ClientID') . ' - ' . ($data['message'] ?? '');
+                $clientItemId = (isset($data['clientItemId'])) ? $data['clientItemId'] : false;
+                $errors[] = ($clientItemId ? $clientItemId : 'No ClientID') . ' - ' . ((isset($data['message'])) ? $data['message'] : '');
             }
 
             if (!empty($errors)) {
-                throw new OmnivaException(implode('. ', $errors), $this->get_debug_data());
+                throw new OmnivaException(implode('. ', $errors), $this->getDebugData());
             }
 
             if (empty($barcodes) && empty($errors)) {
@@ -248,16 +260,18 @@ class Request
                 'barcodes' => $barcodes,
                 'barcodes_mapped' => $barcodes_mapped,
                 'message' => '',
-                'debug' => $this->get_debug_data()
+                'debug' => $this->getDebugData()
             );
         } catch (\Exception $e) {
-            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
+            throw new OmnivaException($e->getMessage(), $this->getDebugData());
         }
     }
 
     /**
      * @param string $request
+     * 
      * @return array
+     * @throws OmnivaException
      */
     public function call( $request )
     {
@@ -294,6 +308,7 @@ class Request
 
     /**
      * @param string $xmlResponse
+     * 
      * @return string
      */
     private function clearXmlResponse( $xmlResponse )
@@ -304,7 +319,9 @@ class Request
     /**
      * @param string $xml
      * @param string $url
+     * 
      * @return mixed
+     * @throws OmnivaException
      */
     private function makeCall( $xml, $url )
     {
@@ -327,7 +344,7 @@ class Request
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
         if ($xml) {
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
@@ -366,7 +383,6 @@ class Request
      * @param OmxRequestInterface $request Request object with data to build cURL request from
      * 
      * @return string Response body
-     * 
      * @throws OmnivaException
      */
     public function callOmxApi(OmxRequestInterface $request)
@@ -421,25 +437,25 @@ class Request
         $this->debug_response = $response;
 
         if ($http_code === 401) {
-            throw new OmnivaException('Unauthorized! Check credentials', $this->get_debug_data());
+            throw new OmnivaException('Unauthorized! Check credentials', $this->getDebugData());
         }
 
         // OMX API on 400 (Bad Request) returns json body with erorrs
         if ($http_code === 400) {
             $error_msg = $this->parseOmx400Response($response);
 
-            throw new OmnivaException('Bad Request ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->get_debug_data());
+            throw new OmnivaException('Bad Request ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->getDebugData());
         }
 
         if ($http_code === 404 || ($http_code >= 500 && $http_code < 600)) {
             // OMX API on 500 and 404 returns json body with different structure for error
             $error_msg = $this->parseOmx500Response($response);
 
-            throw new OmnivaException('Unexpected server error ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->get_debug_data());
+            throw new OmnivaException('Unexpected server error ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->getDebugData());
         }
 
         if ($http_code === 0) {
-            throw new OmnivaException('Bad API URL', $this->get_debug_data());
+            throw new OmnivaException('Bad API URL', $this->getDebugData());
         }
 
         return $response;
@@ -480,7 +496,7 @@ class Request
             return null;
         }
 
-        $errors = $error_response['errors'] ?? [];
+        $errors = (isset($error_response['errors'])) ? $error_response['errors'] : [];
         $errors_parsed = [];
         foreach ($errors as $key => $array) {
             if (!$array) {
@@ -489,7 +505,7 @@ class Request
 
             $error_msgs = [];
             foreach ($array as $error) {
-                if ($error['message'] ?? false) {
+                if ((isset($error['message'])) ? $error['message'] : false) {
                     $error_msgs[] = $error['message'];
                 }
             }
@@ -497,7 +513,10 @@ class Request
             $errors_parsed[] = $key . ': ' . implode(', ', $error_msgs);
         }
 
-        return ($error_response['title'] ?? '') . ': ' . ($error_response['details'] ?? '') . ' - ' . implode(', ', $errors_parsed);
+        $error_response_title = (isset($error_response['title'])) ? $error_response['title'] : '';
+        $error_response_details = (isset($error_response['details'])) ? $error_response['details'] : '';
+
+        return $error_response_title . ': ' . $error_response_details . ' - ' . implode(', ', $errors_parsed);
     }
 
     /**
@@ -528,11 +547,15 @@ class Request
             return null;
         }
 
-        return ($error_response['title'] ?? '') . ': ' . ($error_response['details'] ?? '');
+        $error_response_title = (isset($error_response['title'])) ? $error_response['title'] : '';
+        $error_response_details = (isset($error_response['details'])) ? $error_response['details'] : '';
+
+        return $error_response_title . ': ' . $error_response_details;
     }
 
     /**
      * @param string $request
+     * 
      * @return string
      */
     private function buildRequestXml( $request )
@@ -565,8 +588,10 @@ class Request
     }
 
     /**
-     * @param (string) $xmlResponse
-     * @return object
+     * @param string $xmlResponse
+     * 
+     * @return Request
+     * @throws OmnivaException
      */
     private function convertResponseToXml( $xmlResponse )
     {
@@ -602,7 +627,9 @@ class Request
     }
 
     /**
-     * @param (string) $xmlResponse
+     * @param string $xmlResponse
+     * 
+     * @throws OmnivaException
      */
     private function getResponseNotObjectError( $xmlResponse )
     {
@@ -621,6 +648,7 @@ class Request
      * @param string|null $send_to_email
      * 
      * @return mixed
+     * @throws OmnivaException
      */
     public function getLabelsOmx($barcodes, $send_to_email = null)
     {
@@ -645,24 +673,24 @@ class Request
                 throw new OmnivaException('Something went wrong. Bad response format from Omniva API');
             }
 
-            $success = $response['successAddressCards'] ?? [];
+            $success = (isset($response['successAddressCards'])) ? $response['successAddressCards'] : [];
             foreach ($success as $data) {
-                $barcode = $data['barcode'] ?? null;
-                $fileData = $data['fileData'] ?? null;
+                $barcode = (isset($data['barcode'])) ? $data['barcode'] : null;
+                $fileData = (isset($data['fileData'])) ? $data['fileData'] : null;
 
                 // if sending to email success gives back barcode
                 $labels[$barcode] = $omx_request->isSentToEmail() ? $barcode : $fileData;
             }
 
-            $failed = $response['failedAddressCards'] ?? [];
+            $failed = (isset($response['failedAddressCards'])) ? $response['failedAddressCards'] : [];
             $errors = array();
             foreach ($failed as $data) {
-                $barcode = $data['barcode'] ?? null;
-                $errors[] = ($barcode ? $barcode : 'No barcode') . ' - ' . ($data['messageCode'] ?? '');
+                $barcode = (isset($data['barcode'])) ? $data['barcode'] : null;
+                $errors[] = ($barcode ? $barcode : 'No barcode') . ' - ' . ((isset($data['messageCode'])) ? $data['messageCode'] : '');
             }
 
             if (!empty($errors)) {
-                throw new OmnivaException(implode('. ', $errors), $this->get_debug_data());
+                throw new OmnivaException(implode('. ', $errors), $this->getDebugData());
             }
 
             if (empty($labels) && empty($errors)) {
@@ -673,13 +701,15 @@ class Request
                 'labels' => $labels
             ];
         } catch (\Exception $e) {
-            throw new OmnivaException($e->getMessage(), $this->get_debug_data());
+            throw new OmnivaException($e->getMessage(), $this->getDebugData());
         }
     }
 
     /**
      * @param array $barcodes
+     * 
      * @return mixed
+     * @throws OmnivaException
      */
     public function getLabels( $barcodes )
     {
@@ -740,6 +770,7 @@ class Request
 
     /**
      * @return mixed
+     * @throws OmnivaException
      */
     public function getTracking()
     {
@@ -761,7 +792,9 @@ class Request
 
     /**
      * @param \DOMDocument $dom
+     * 
      * @return bool
+     * @throws OmnivaException
      */
     private function validateSchema( $dom )
     {
@@ -779,7 +812,8 @@ class Request
 
     /**
      * @param bool $enable
-     * @return object
+     * 
+     * @return Request
      */
     public function enableDebug( $enable )
     {
@@ -789,7 +823,8 @@ class Request
 
     /**
      * @param string $url
-     * @return object
+     * 
+     * @return Request
      */
     private function setDebugUrl( $url )
     {
@@ -799,7 +834,8 @@ class Request
 
     /**
      * @param string|int $http_code
-     * @return object
+     * 
+     * @return Request
      */
     private function setDebugHttpCode( $http_code )
     {
@@ -809,7 +845,8 @@ class Request
 
     /**
      * @param string $request
-     * @return object
+     * 
+     * @return Request
      */
     private function setDebugRequest( $request )
     {
@@ -819,7 +856,8 @@ class Request
 
     /**
      * @param string $response
-     * @return object
+     * 
+     * @return Request
      */
     private function setDebugResponse( $response )
     {
@@ -845,13 +883,15 @@ class Request
     /*** Deprecated functions ***/
     public function get_labels( $barcodes )
     {
-        trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+        $function_txt = debug_backtrace()[0]['file'] . ' on line ' . debug_backtrace()[0]['line'];
+        trigger_error('Method ' . __METHOD__ . " is deprecated. \nCalled in " . $function_txt . ".\nTriggered", E_USER_DEPRECATED);
         return $this->getLabels($barcodes);
     }
 
     public function get_debug_data()
     {
-        trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+        $function_txt = debug_backtrace()[0]['file'] . ' on line ' . debug_backtrace()[0]['line'];
+        trigger_error('Method ' . __METHOD__ . " is deprecated. \nCalled in " . $function_txt . ".\nTriggered", E_USER_DEPRECATED);
         return $this->getDebugData();
     }
 }
