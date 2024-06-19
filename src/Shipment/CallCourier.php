@@ -40,22 +40,21 @@ class CallCourier
     /** @var array|bool Holds call response body - on failed call will be FALSE. OMX Only */
     private $response;
     
-    /*
-     * @var string
-     */
+    /** @var string */
     private $earliestPickupTime = '8:00';
     
-    /*
-     * @var string
-     */
+    /** @var string */
     private $latestPickupTime = '17:00';
 
+    /** @var int */
     private $parcelsNumber = 1;
 
+    /** @var array */
     private $debugData = array();
 
-    /* 
+    /** 
      * @param string $time
+     * 
      * @return CallCourier
      */
     public function setEarliestPickupTime($time)
@@ -64,8 +63,9 @@ class CallCourier
         return $this;
     }
 
-    /* 
+    /**
      * @param string $time
+     * 
      * @return CallCourier
      */
     public function setLatestPickupTime($time)
@@ -74,19 +74,28 @@ class CallCourier
         return $this;
     }
 
+    /**
+     * @param int $number
+     * 
+     * @return CallCourier
+     */
     public function setParcelsNumber($number)
     {
         $this->parcelsNumber = ($number > 0) ? $number : 1;
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getParcelsNumber()
     {
         return $this->parcelsNumber;
     }
 
-    /* 
+    /**
      * @param Contact $sender
+     * 
      * @return CallCourier
      */
     public function setSender($sender)
@@ -165,7 +174,7 @@ class CallCourier
      */
     public function getResponseTimeStart()
     {
-        return $this->response['startTime'] ?? null;
+        return (isset($this->response['startTime'])) ? $this->response['startTime'] : null;
     }
 
     /**
@@ -177,7 +186,7 @@ class CallCourier
      */
     public function getResponseTimeEnd()
     {
-        return $this->response['endTime'] ?? null;
+        return (isset($this->response['endTime'])) ? $this->response['endTime'] : null;
     }
 
     /**
@@ -189,7 +198,7 @@ class CallCourier
      */
     public function getResponseCallNumber()
     {
-        return $this->response['courierOrderNumber'] ?? null;
+        return (isset($this->response['courierOrderNumber'])) ? $this->response['courierOrderNumber'] : null;
     }
 
     /**
@@ -271,13 +280,13 @@ class CallCourier
             }
         */
 
-        $result = $this->response['resultCode'] ?? '';
+        $result = (isset($this->response['resultCode'])) ? $this->response['resultCode'] : '';
 
         return strtoupper($result) === 'OK';
     }
 
     /**
-     * @var bool $use_legacy_api Default FALSE to use OMX API, using TRUE switches to old XML request
+     * @param bool $use_legacy_api Default FALSE to use OMX API, using TRUE switches to old XML request
      * 
      * @return string|boolean
      */
@@ -301,7 +310,7 @@ class CallCourier
         return false;
     }
 
-    /*
+    /**
      * @return string
      */
     private function buildXml()
@@ -348,6 +357,9 @@ class CallCourier
         return $xml;
     }
 
+    /**
+     * @return string
+     */
     private function getServiceCode()
     {
         if($this->destinationCountry == 'estonia')
@@ -362,13 +374,20 @@ class CallCourier
         return 'QH';
     }
 
+    /**
+     * @param array $debug_data
+     * 
+     * @return CallCourier
+     */
     private function setDebugData( $debug_data )
     {
         $this->debugData = $debug_data;
-
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getDebugData()
     {
         return $this->debugData;
@@ -377,7 +396,7 @@ class CallCourier
     /**
      * Get destinationCountry
      *
-     * @return  string
+     * @return string
      */ 
     public function getDestinationCountry()
     {
@@ -387,14 +406,13 @@ class CallCourier
     /**
      * Set destinationCountry
      *
-     * @param  string  $destinationCountry  destinationCountry
+     * @param string $destinationCountry destinationCountry
      *
-     * @return  self
+     * @return CallCourier
      */ 
     public function setDestinationCountry($destinationCountry)
     {
         $this->destinationCountry = $destinationCountry;
-
         return $this;
     }
 }
