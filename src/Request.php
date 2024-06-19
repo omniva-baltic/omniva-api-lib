@@ -169,6 +169,14 @@ class Request
     }
 
     /**
+     * @return int
+     */
+    private function getCurlTimeout()
+    {
+        return $this->curl_timeout;
+    }
+
+    /**
      * @return Request
      */
     public function setUseTestOmxApi($use_test_omx_api = false)
@@ -219,7 +227,7 @@ class Request
             $saved = (isset($response['savedShipments'])) ? $response['savedShipments'] : [];
             foreach ($saved as $data) {
                 $clientItemId = (isset($data['clientItemId'])) ? $data['clientItemId'] : false;
-                $barcode = (string) ((isset($data['barcode']) ? $data['barcode'] : '');
+                $barcode = (string) ((isset($data['barcode'])) ? $data['barcode'] : '');
 
                 if ($clientItemId) {
                     if (!isset($barcodes_mapped[$clientItemId])) {
@@ -417,8 +425,8 @@ class Request
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
-            CURLOPT_USERPWD => "$this->username:$this->password",
-            CURLOPT_TIMEOUT => $this->curl_timeout,
+            CURLOPT_USERPWD => $this->getUsername() . ':' . $this->getPassword(),
+            CURLOPT_TIMEOUT => $this->getCurlTimeout(),
         ]);
 
         if ($request->getRequestMethod() === OmxRequestInterface::REQUEST_METHOD_POST) {
@@ -659,7 +667,7 @@ class Request
             $omx_request = (new PackageLabelOmxRequest())
                 ->addBarcode($barcodes);
 
-            $omx_request->customerCode = $this->username;
+            $omx_request->customerCode = $this->getUsername();
 
             if ($send_to_email) {
                 $omx_request->setEmail($send_to_email);

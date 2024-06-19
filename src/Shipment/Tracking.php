@@ -14,7 +14,7 @@ class Tracking
      */
     private $request;
     
-    /*
+    /**
      * @param string $username
      * @param string $password
      * @param string $api_url
@@ -23,9 +23,11 @@ class Tracking
         $this->request = new Request($username, $password, $api_url);
     }
 
-    /*
+    /**
      * @param array $barcodes
+     * 
      * @return mixed
+     * @throws OmnivaException
      */
     public function getTracking($barcodes)
     {
@@ -59,6 +61,12 @@ class Tracking
         return $trackings;
     }
 
+    /**
+     * @param string $barcode
+     * 
+     * @return array
+     * @throws OmnivaException
+     */
     public function getTrackingOmx($barcode)
     {
         if (empty($this->request)) {
@@ -75,6 +83,6 @@ class Tracking
             throw new OmnivaException("Something went wrong with server response");
         }
 
-        return $response['events'] ?? [];
+        return (isset($response['events'])) ? $response['events'] : [];
     }
 }
