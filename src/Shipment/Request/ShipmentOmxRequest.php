@@ -9,6 +9,7 @@ use Mijora\Omniva\Shipment\AdditionalService\DocumentReturnService;
 use Mijora\Omniva\Shipment\Package\Measures;
 use Mijora\Omniva\Shipment\Package\Notification;
 use Mijora\Omniva\Shipment\Package\Package;
+use Mijora\Omniva\Shipment\Package\ServicePackage;
 use Mijora\Omniva\Shipment\Shipment;
 
 class ShipmentOmxRequest implements OmxRequestInterface
@@ -42,7 +43,13 @@ class ShipmentOmxRequest implements OmxRequestInterface
         if (!isset($this->shipments[$package_id])) {
             $shipment = [
                 'mainService' => $main_service,
-                'deliveryChannel' => $package->getChannel(),
+            ];
+
+            if ($package->isDeliveryChannelRequired()) {
+                $shipment['deliveryChannel'] = $package->getChannel();
+            }
+
+            $shipment = array_merge($shipment, [
                 'shipmentComment' => $package->getComment(),
                 'returnAllowed' => $package->getReturnAllowed(),
                 'paidByReceiver' => $package->getPaidByReceiver(),
@@ -50,7 +57,12 @@ class ShipmentOmxRequest implements OmxRequestInterface
                 'measurement' => $this->formatMeasures($package->getMeasures()),
                 'receiverAddressee' => $package->getReceiverContact()->getAddresseeForOmx($package->getChannel()),
                 'senderAddressee' => $package->getSenderContact()->getAddresseeForOmx(),
-            ];
+            ]);
+
+            $service_package = $package->getServicePackage();
+            if ($service_package && ServicePackage::checkCode($service_package->getCode(), $main_service)) {
+                $shipment['servicePackage'] = $service_package->getServicePackage();
+            }
 
             $notifications = $package->getNotifications();
             if ($notifications) {
@@ -63,7 +75,7 @@ class ShipmentOmxRequest implements OmxRequestInterface
             }
 
             $additional_services = $package->getAdditionalServicesOmx();
-            
+
             if ($additional_services) {
                 $shipment['addServices'] = [];
             }
@@ -86,14 +98,27 @@ class ShipmentOmxRequest implements OmxRequestInterface
             throw new OmnivaException('Consolidated shipments allowed only for main service PARCEL or PALLET and delivery channel COURIER with additional service COD or DOCUMENT_RETURN');
         }
 
+        // check if packages additional services can be consolidated
+        if (!$package->isAbleToConsolidate()) {
+            throw new OmnivaException('Only [ '
+                . implode(', ', $package->getConsolidationAllowedAdditionalServiceCodes()) 
+                . ' ] service codes is allowed on consolidated package');
+        }
+
         if (!isset($this->shipments[$package_id]['consolidatedShipments'])) {
             $this->shipments[$package_id]['consolidatedShipments'] = [];
         }
 
-        $this->shipments[$package_id]['consolidatedShipments'][] = [
+        $consolidate_data = [
             'barcode' => null,
-            'weight' => $this->getWeightFromMeasure($package->getMeasures()),
+            'partnerShipmentId' => $package_id . '::' . count($this->shipments[$package_id]['consolidatedShipments']),
+            // 'weight' => $this->getWeightFromMeasure($package->getMeasures()),
+            'addServices' => $package->getConsolidatedAdditionalServices(),
         ];
+
+        $additional_services = $package->getAdditionalServicesOmx();
+
+        $this->shipments[$package_id]['consolidatedShipments'][] = $consolidate_data;
     }
 
     public function canAddConsolidatedShipment($package_id)

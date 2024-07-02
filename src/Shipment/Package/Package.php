@@ -61,6 +61,23 @@ class Package
         ],
     ];
 
+    /** Channel is required for requests in these countries */
+    const CHANNEL_REQUIRED_FOR_COUNTRY = [
+        self::MAIN_SERVICE_PARCEL => [
+            'LT',
+            'LV',
+            'EE',
+        ],
+        self::MAIN_SERVICE_LETTER => [
+            'EE',
+        ],
+    ];
+
+    /** Available additional services when package is considered as consolidated (2nd package and up) */
+    const CONSOLIDATE_ADDITIONAL_SERVICE_AVAILABILITY = [
+        FragileService::CODE
+    ];
+
     /**
      * Legacy codes for delivery by courier
      */
@@ -117,6 +134,12 @@ class Package
     private $channel;
 
     /**
+     * mandatory if mainService=LETTER or if destination is not EE, LV, LT
+     * @var ServicePackage
+     */
+    private $servicePackage;
+
+    /**
      * Whether the return is allowed and return code showed or not. By default (if element does not exist) the value is: false
      * @var bool
      */
@@ -142,7 +165,7 @@ class Package
      * @var AdditionalServiceInterface[]
      */
     private $additionalServicesOmx = [];
-    
+
     /**
      * @var Notifications[]
      */
@@ -250,6 +273,7 @@ class Package
 
         // legacy service code
         if (!$channel) {
+            // store legacy code
             $this->service = $main_service;
 
             // try to determine main service and channel based on legacy code
@@ -262,6 +286,13 @@ class Package
             } elseif (in_array($main_service, self::LEGACY_SERVICES_PICK_UP_POINT)) { // Parcel - Pickup Point
                 $main_service = self::MAIN_SERVICE_PARCEL;
                 $channel = self::CHANNEL_PICK_UP_POINT;
+
+                // in previous version CD was service for Finland terminals, requires servicePackage in OMX
+                if ($this->service === 'CD') {
+                    $this->setServicePackage(
+                        (new ServicePackage(ServicePackage::CODE_STANDARD))
+                    );
+                }
             } elseif (in_array($main_service, self::LEGACY_SERVICES_POST_OFFICE)) { // Parcel - Post office
                 $main_service = self::MAIN_SERVICE_PARCEL;
                 $channel = self::CHANNEL_POST_OFFICE;
@@ -323,6 +354,27 @@ class Package
     public function setAdditionalServiceOmx(AdditionalServiceInterface $omx_add_service)
     {
         $this->additionalServicesOmx[$omx_add_service->getServiceCode()] = $omx_add_service;
+
+        return $this;
+    }
+
+    /**
+     * Removes given additional service from assigned to package, if service code is not given all assigned services will be removed
+     * 
+     * @param string $service_code Service code tp be removed, example FRAGILE. Codes are case sensitive
+     * 
+     * @return Package
+     */
+    public function resetAdditionalServiceOMX($service_code = null)
+    {
+        if (!$service_code) {
+            $this->additionalServicesOmx = [];
+            return $this;
+        }
+
+        if (isset($this->additionalServicesOmx[$service_code])) {
+            unset($this->additionalServicesOmx[$service_code]);
+        }
 
         return $this;
     }
@@ -623,5 +675,94 @@ class Package
         }
 
         return null;
+    }
+
+    /**
+     * Identifies if package can be consolidated. Used to check 2nd and on package.
+     * 
+     * @return bool
+     */
+    public function isAbleToConsolidate()
+    {
+        if (!$this->additionalServicesOmx) {
+            return true;
+        }
+
+        foreach ($this->additionalServicesOmx as $code => $service) {
+            if (!in_array($code, self::CONSOLIDATE_ADDITIONAL_SERVICE_AVAILABILITY)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns array of available for consolidated package additional service codes. 
+     * 
+     * @return array
+     */
+    public function getConsolidationAllowedAdditionalServiceCodes()
+    {
+        return self::CONSOLIDATE_ADDITIONAL_SERVICE_AVAILABILITY;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConsolidatedAdditionalServices()
+    {
+        $services = $this->getAdditionalServicesOmx();
+
+        // within consolidated services only codes array is needed
+        return $services ? array_keys($services) : [];
+    }
+
+    /**
+     * Service package code for OMX API
+     * @return ServicePackage|null
+     */
+    public function getServicePackage()
+    {
+        return $this->servicePackage;
+    }
+
+    /**
+     * Set service package for OMX API
+     * @param ServicePackage|null $servicePackage pass null to remove servicePackage
+     * 
+     * @return Package
+     */
+    public function setServicePackage(ServicePackage $servicePackage)
+    {
+        if (null !== $servicePackage && !($servicePackage instanceof ServicePackage)) {
+            throw new OmnivaException('servicePackage object must be instance of ServicePackage class');
+        }
+
+        $this->servicePackage = $servicePackage;
+
+        return $this;
+    }
+
+    /**
+     * Checks if delivery channel is required based on set main service and receiver address.
+     * NOTE: if main service or receiver address are not set this will report as channel not required
+     * 
+     * @return bool Returns true if required, FALSE otherwise or if main service or receiver address are not set
+     */
+    public function isDeliveryChannelRequired()
+    {
+        if (!$this->getMainService()) {
+            return false;
+        }
+
+        if (!$this->getReceiverContact() || !$this->getReceiverContact()->getAddress()) {
+            return false;
+        }
+
+        $country_code = $this->getReceiverContact()->getAddress()->getCountry();
+
+        return isset(self::CHANNEL_REQUIRED_FOR_COUNTRY[$this->getMainService()])
+            && in_array($country_code, self::CHANNEL_REQUIRED_FOR_COUNTRY[$this->getMainService()]);
     }
 }
