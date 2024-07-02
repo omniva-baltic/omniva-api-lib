@@ -52,9 +52,9 @@ class Request
     {
         $this->helper = new Helper();
 
-        if ( ! empty($username) ) $this->setUsername($username);
-        if ( ! empty($password) ) $this->setPassword($password);
-        if ( ! empty($api_url_domain) ) $this->setApiUrlDomain($api_url_domain);
+        if (!empty($username)) $this->setUsername($username);
+        if (!empty($password)) $this->setPassword($password);
+        if (!empty($api_url_domain)) $this->setApiUrlDomain($api_url_domain);
         $this->enableDebug($debug);
     }
 
@@ -63,7 +63,7 @@ class Request
      * 
      * @return Request
      */
-    public function setUsername( $username )
+    public function setUsername($username)
     {
         $this->username = $username;
         return $this;
@@ -82,7 +82,7 @@ class Request
      * 
      * @return Request
      */
-    public function setPassword( $password )
+    public function setPassword($password)
     {
         $this->password = $password;
         return $this;
@@ -101,7 +101,7 @@ class Request
      * 
      * @return Request
      */
-    public function setApiUrlDomain( $url_domain )
+    public function setApiUrlDomain($url_domain)
     {
         $this->api_url_domain = $url_domain;
         return $this;
@@ -120,7 +120,7 @@ class Request
      * 
      * @return Request
      */
-    public function setApiUrlPath( $url_path )
+    public function setApiUrlPath($url_path)
     {
         $this->api_url_path = $url_path;
         return $this;
@@ -139,7 +139,7 @@ class Request
      * 
      * @return Request
      */
-    public function setApiUrl( $url )
+    public function setApiUrl($url)
     {
         $parsed_url = parse_url($url);
 
@@ -281,7 +281,7 @@ class Request
      * @return array
      * @throws OmnivaException
      */
-    public function call( $request )
+    public function call($request)
     {
         $xml = $this->buildRequestXml($request);
         $this->validate($xml);
@@ -298,7 +298,7 @@ class Request
                 $barcodes[] = (string) $data->barcode;
             }
 
-            if ( empty($barcodes) ) {
+            if (empty($barcodes)) {
                 throw new OmnivaException('Error in XML request', $this->getDebugData());
             }
 
@@ -319,7 +319,7 @@ class Request
      * 
      * @return string
      */
-    private function clearXmlResponse( $xmlResponse )
+    private function clearXmlResponse($xmlResponse)
     {
         return str_ireplace(['SOAP-ENV:', 'SOAP:', 'ns3:'], '', $xmlResponse);
     }
@@ -331,7 +331,7 @@ class Request
      * @return mixed
      * @throws OmnivaException
      */
-    private function makeCall( $xml, $url )
+    private function makeCall($xml, $url)
     {
         $headers = array(
             "Content-type: text/xml;charset=\"utf-8\"",
@@ -521,6 +521,32 @@ class Request
             $errors_parsed[] = $key . ': ' . implode(', ', $error_msgs);
         }
 
+        // some errors are of different structure
+        /**
+         * {
+         *      "resultCode": "ERROR",
+         *      "savedShipments": [],
+         *      "failedShipments": [
+         *          {
+         *              "clientItemId": "54155454",
+         *              "messageCode": "{com.omniva.phoenix.price.list.does.not.exist}",
+         *              "message": "Object validation Failed!;mainService - Price list does not exist"
+         *          }
+         *      ]
+         * }
+         */
+        $failedShipments = (isset($error_response['failedShipments'])) ? $error_response['failedShipments'] : [];
+        foreach ($failedShipments as $failedShipment) {
+            $key = isset($failedShipment['clientItemId']) ? $failedShipment['clientItemId'] : null;
+            $message = isset($failedShipment['message']) ? $failedShipment['message'] : null;
+
+            if (!$key && !$message) {
+                continue;
+            }
+
+            $errors_parsed[] = $key . ': ' . $message;
+        }
+
         $error_response_title = (isset($error_response['title'])) ? $error_response['title'] : '';
         $error_response_details = (isset($error_response['details'])) ? $error_response['details'] : '';
 
@@ -566,7 +592,7 @@ class Request
      * 
      * @return string
      */
-    private function buildRequestXml( $request )
+    private function buildRequestXml($request)
     {
         $xml = '
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://service.core.epmx.application.eestipost.ee/xsd">
@@ -585,7 +611,7 @@ class Request
     /**
      * @param string $xml
      */
-    private function validate( $xml )
+    private function validate($xml)
     {
         $dom = new \DOMDocument;
         $dom->preserveWhiteSpace = false;
@@ -601,16 +627,16 @@ class Request
      * @return Request
      * @throws OmnivaException
      */
-    private function convertResponseToXml( $xmlResponse )
+    private function convertResponseToXml($xmlResponse)
     {
-        if ( $xmlResponse === false || strlen(trim($xmlResponse)) <= 0 ) {
+        if ($xmlResponse === false || strlen(trim($xmlResponse)) <= 0) {
             throw new OmnivaException('Error in XML request', $this->getDebugData());
         }
 
         $xmlResponse = $this->clearXmlResponse($xmlResponse);
         $xml = @simplexml_load_string($xmlResponse);
 
-        if ( ! is_object($xml) ) {
+        if (!is_object($xml)) {
             $this->getResponseNotObjectError($xmlResponse);
         }
 
@@ -619,13 +645,13 @@ class Request
             foreach ($xml->Body->businessToClientMsgResponse->faultyPacketInfo->barcodeInfo as $data) {
                 $errors[] = $data->clientItemId . ' - ' . $data->barcode . ' - ' . $data->message;
             }
-            if ( ! empty($errors) ) {
+            if (!empty($errors)) {
                 throw new OmnivaException(implode('. ', $this->helper->translateErrors($errors)), $this->getDebugData());
             }
         }
 
-        if ( ! is_object($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo) ) {
-            if ( is_object($xml->Body->businessToClientMsgResponse->prompt) ) {
+        if (!is_object($xml->Body->businessToClientMsgResponse->savedPacketInfo->barcodeInfo)) {
+            if (is_object($xml->Body->businessToClientMsgResponse->prompt)) {
                 throw new OmnivaException((string) $xml->Body->businessToClientMsgResponse->prompt, $this->getDebugData());
             }
             throw new OmnivaException('No barcodes received', $this->getDebugData());
@@ -639,7 +665,7 @@ class Request
      * 
      * @throws OmnivaException
      */
-    private function getResponseNotObjectError( $xmlResponse )
+    private function getResponseNotObjectError($xmlResponse)
     {
         if (
             strpos($xmlResponse, 'HTTP Status 401') !== false
@@ -719,7 +745,7 @@ class Request
      * @return mixed
      * @throws OmnivaException
      */
-    public function getLabels( $barcodes )
+    public function getLabels($barcodes)
     {
         $labels = [];
         $barcodeXML = '';
@@ -745,7 +771,7 @@ class Request
             $url = $this->getApiUrl();
 
             $xmlResponse = $this->makeCall($xml, $url);
-            
+
             if ($xmlResponse === false) {
                 $errors[] = "Error in xml request";
             }
@@ -783,9 +809,9 @@ class Request
     public function getTracking()
     {
         $url = $this->getApiUrlDomain() . '/epteavitus/events/from/' . date("c", strtotime("-1 week +1 day")) . '/for-client-code/' . $this->getUsername();
-        
+
         $xmlResponse = $this->makeCall(false, $url);
-        
+
         $return = $this->clearXmlResponse($xmlResponse);
         try {
             $xml = @simplexml_load_string($return);
@@ -804,7 +830,7 @@ class Request
      * @return bool
      * @throws OmnivaException
      */
-    private function validateSchema( $dom )
+    private function validateSchema($dom)
     {
         libxml_use_internal_errors(true);
         if (!$dom->schemaValidate(dirname(__FILE__) . '/Xsd/soap.xsd')) {
@@ -823,7 +849,7 @@ class Request
      * 
      * @return Request
      */
-    public function enableDebug( $enable )
+    public function enableDebug($enable)
     {
         $this->debug = $enable;
         return $this;
@@ -834,7 +860,7 @@ class Request
      * 
      * @return Request
      */
-    private function setDebugUrl( $url )
+    private function setDebugUrl($url)
     {
         $this->debug_url = $url;
         return $this;
@@ -845,7 +871,7 @@ class Request
      * 
      * @return Request
      */
-    private function setDebugHttpCode( $http_code )
+    private function setDebugHttpCode($http_code)
     {
         $this->debug_http_code = $http_code;
         return $this;
@@ -856,7 +882,7 @@ class Request
      * 
      * @return Request
      */
-    private function setDebugRequest( $request )
+    private function setDebugRequest($request)
     {
         $this->debug_request = $request;
         return $this;
@@ -867,7 +893,7 @@ class Request
      * 
      * @return Request
      */
-    private function setDebugResponse( $response )
+    private function setDebugResponse($response)
     {
         $this->debug_response = $response;
         return $this;
@@ -889,7 +915,7 @@ class Request
     }
 
     /*** Deprecated functions ***/
-    public function get_labels( $barcodes )
+    public function get_labels($barcodes)
     {
         $function_txt = debug_backtrace()[0]['file'] . ' on line ' . debug_backtrace()[0]['line'];
         trigger_error('Method ' . __METHOD__ . " is deprecated. \nCalled in " . $function_txt . ".\nTriggered", E_USER_DEPRECATED);
