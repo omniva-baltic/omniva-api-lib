@@ -449,7 +449,7 @@ class Request
         }
 
         // OMX API on 400 (Bad Request) returns json body with erorrs
-        if ($http_code === 400) {
+        if ($http_code === 400 || $http_code === 403) {
             $error_msg = $this->parseOmx400Response($response);
 
             throw new OmnivaException('Bad Request ' . $http_code . ($error_msg ? ': ' . $error_msg : ''), $this->getDebugData());
@@ -550,7 +550,13 @@ class Request
         $error_response_title = (isset($error_response['title'])) ? $error_response['title'] : '';
         $error_response_details = (isset($error_response['details'])) ? $error_response['details'] : '';
 
-        return $error_response_title . ': ' . $error_response_details . ' - ' . implode(', ', $errors_parsed);
+        $return_msg = '';
+        if (!empty($error_response_title)) $return_msg .= $error_response_title . ': ';
+        if (!empty($error_response_details)) $return_msg .= $error_response_details;
+        if (!empty($error_response_details) && !empty($errors_parsed)) $return_msg .= ' - ';
+        if (!empty($errors_parsed)) $return_msg .= implode(', ', $errors_parsed);
+
+        return $return_msg;
     }
 
     /**
