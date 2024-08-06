@@ -4,6 +4,8 @@ namespace Mijora\Omniva\Shipment;
 
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Request;
+use Mijora\Omniva\Shipment\Package\Package;
+use Mijora\Omniva\Shipment\Request\ShipmentOmxRequest;
 
 class Shipment
 {
@@ -80,9 +82,9 @@ class Shipment
     private $partnerId;
 
     /**
-     * @var array
+     * @var Package[]
      */
-    private $packages;
+    private $packages = [];
     
     /**
      * @var Request
@@ -118,16 +120,17 @@ class Shipment
     /*
      * @return mixed
      */
-    public function registerShipment()
+    public function registerShipment($use_old_api = false)
     {
         if ( empty($this->request) ) {
             throw new OmnivaException("Please set username and password");
         }
-        return $this->request->call($this->toXml()->asXML());
+
+        return $use_old_api ? $this->request->call($this->toXml()->asXML()) : $this->request->registerShipmentOmx($this->getOmxShipmentRequest());
     }
 
     /**
-     * @return array
+     * @return Package[]
      */
     public function getPackages()
     {
@@ -135,12 +138,30 @@ class Shipment
     }
 
     /**
-     * @param array $packages
+     * @param Package[]|Package $packages Array of Package objects or just Package obj by itself
+     * @param bool $replace Should given packages replace currently set ones. If true replaces whole array with new values, if false will add to array
+     * 
      * @return Shipment
+     * @throws OmnivaException
      */
-    public function setPackages( $packages )
+    public function setPackages($packages, $replace = false)
     {
-        $this->packages = $packages;
+        if (!is_array($packages)) {
+            $packages = [$packages];
+        }
+
+        if ($replace) {
+            $this->packages = [];
+        }
+
+        foreach ($packages as $package) {
+            if (Package::class !== get_class($package)) {
+                throw new OmnivaException("Trying to add package that is not of class Package");
+            }
+
+            $this->packages[] = $package;
+        }
+
         return $this;
     }
 
@@ -258,6 +279,28 @@ class Shipment
         }
 
         return (object) self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode][$additionServiceCode];
+    }
+
+    /**
+     * @return ShipmentOmxRequest
+     */
+    public function getOmxShipmentRequest()
+    {
+        $omxRequest = new ShipmentOmxRequest();
+
+        $header = $this->getShipmentHeader();
+        $omxRequest->customerCode = $header->getSenderCd();
+        $omxRequest->fileId = $header->getFileId();
+        
+        $packages = $this->getPackages();
+        foreach ($packages as $package) {
+            // legacy comment was on main shipment
+            $package->setComment($this->getComment());
+
+            $omxRequest->addShipment($package);
+        }
+
+        return $omxRequest;
     }
 
     public function toXml()

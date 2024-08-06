@@ -5,6 +5,7 @@ namespace Mijora\Omniva\Shipment;
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Request;
 use Mijora\Omniva\Helper;
+use Mijora\Omniva\Shipment\Request\EventsOmxRequest;
 
 class Tracking
 {
@@ -13,7 +14,7 @@ class Tracking
      */
     private $request;
     
-    /*
+    /**
      * @param string $username
      * @param string $password
      * @param string $api_url
@@ -22,9 +23,11 @@ class Tracking
         $this->request = new Request($username, $password, $api_url);
     }
 
-    /*
+    /**
      * @param array $barcodes
+     * 
      * @return mixed
+     * @throws OmnivaException
      */
     public function getTracking($barcodes)
     {
@@ -58,4 +61,28 @@ class Tracking
         return $trackings;
     }
 
+    /**
+     * @param string $barcode
+     * 
+     * @return array
+     * @throws OmnivaException
+     */
+    public function getTrackingOmx($barcode)
+    {
+        if (empty($this->request)) {
+            throw new OmnivaException("Please set username and password");
+        }
+
+        $response = $this->request->callOmxApi(
+            (new EventsOmxRequest())->setBarcode($barcode)
+        );
+
+        $response = @json_decode($response, true);
+
+        if (!$response) {
+            throw new OmnivaException("Something went wrong with server response");
+        }
+
+        return (isset($response['events'])) ? $response['events'] : [];
+    }
 }
