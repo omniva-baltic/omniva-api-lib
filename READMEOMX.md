@@ -1,4 +1,6 @@
 **This is currently only a draft**
+Initial release is ment to be used as drop in from previous version. That means your code should mostly work unchanged
+except for below mentioned changes. Library will try to convert old parameters to OMX structure.
 
 ## OMX specific
 - All packages **require** ID. Based on on this ID (usually it will be order ID from client system) library decides if this is a multilabel or consolidated registration.
