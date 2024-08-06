@@ -1,3 +1,6 @@
+## [1.1.0] - Improvements
+- adapted to work with the Omniva OMX server
+
 ## [1.0.18] - Fixes
 - fixed filtering of locations by type
 - adapted to work with PHP 5.6
