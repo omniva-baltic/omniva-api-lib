@@ -14,7 +14,8 @@ And pass collected data:
 - `setDateTimeStamp(string datetime)` - Date time stamp (0000-00-00 00:00:00 format) from which data was collected
 - `setOrderCountCourier(int count)` - Order count with courier option
 - `setOrderCountTerminal(int count)` - Order count with terminal option
-- `setPrice(string country, string courierPrice, string terminalPrice)` - Set price for courier and terminal in a given country. If country not given will be set as Default instead of country code
+- `setCourierPrice(string country, string minPrice, string maxPrice)` - Set price for courier in a given country. If country not given will be set as Default instead of country code. Max price not necessary if the method has no ranges
+- `setTerminalPrice(string country, string minPrice, string maxPrice)` - Set price for terminal in a given country. If country not given will be set as Default instead of country code. Max price not necessary if the method has no ranges
 
 Example:
 ```php
@@ -28,10 +29,13 @@ $opb = (new OmnivaPowerBi('0123456', 'secret'))
     ->setDateTimeStamp(OmnivaPowerBi::DEFAULT_TIMESTAMP)
     ->setOrderCountCourier(10)
     ->setOrderCountTerminal(666)
-    ->setPrice('LT', '5', '0:2.5 ; 100:1')
-    ->setPrice('LV', null, null)
-    ->setPrice('EE', -1, 3.5)
-    ->setPrice('FI', 10, 15.25)
+    ->setCourierPrice('LT', 5)
+    ->setTerminalPrice('LT', 1, 2.5)
+    ->setCourierPrice('LV', null) //For LV set only Courier, but price is not set
+    ->setCourierPrice('EE', -1)
+    ->setTerminalPrice('EE', 3.5)
+    ->setCourierPrice('FI', 10)
+    ->setTerminalPrice('FI', 15.25)
 ;
 
 $result = $opb->send();
@@ -54,23 +58,44 @@ this code will generate and send this body
     "setPricing": {
         "LT": {
             "country": "LT",
-            "courier": "5",
-            "terminal": "0:2.5 ; 100:1"
+            "courier": {
+                "min": "5",
+                "max": "5"
+            },
+            "terminal": {
+                "min": "1",
+                "max": "2.5"
+            }
         },
         "LV": {
             "country": "LV",
-            "courier": "",
-            "terminal": ""
+            "courier": {
+                "min": "",
+                "max": ""
+            },
+            "terminal": null
         },
         "EE": {
             "country": "EE",
-            "courier": "-1",
-            "terminal": "3.5"
+            "courier": {
+                "min": "-1",
+                "max": "-1"
+            },
+            "terminal": {
+                "min": "3.5",
+                "max": "3.5"
+            }
         },
         "FI": {
-            "country": "FI",
-            "courier": "10",
-            "terminal": "15.25"
+            "country": "EE",
+            "courier": {
+                "min": "10",
+                "max": "10"
+            },
+            "terminal": {
+                "min": "15.25",
+                "max": "15.25"
+            }
         }
     },
     "sendingTimestamp": "2024-08-13 11:04:25"

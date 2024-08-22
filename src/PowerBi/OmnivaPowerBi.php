@@ -127,22 +127,50 @@ class OmnivaPowerBi
     }
 
     /**
-     * Set courier and terminal price for given country.
+     * Set Courier price for given country.
      * 
      * @param string|null $country Best ISO 3166-1 alpha-2, eg.: LT, if null or empty string will set as Default
-     * @param string|float $courier_price Courier price, can be float or string if modules uses ranges format etc.
-     * @param string|float $terminal_price Terminal price, can be float or string if modules uses ranges format etc.
+     * @param string|float $min_price Lowest Courier price, also write the price in this parameter, if the method has only one price (no ranges).
+     * @param string|float $max_price Highest Courier price, not necessary if the method has no ranges.
      * 
      * @return \Mijora\Omniva\PowerBi\OmnivaPowerBi
      */
-    public function setPrice($country, $courier_price, $terminal_price)
+    public function setCourierPrice($country, $min_price, $max_price = null)
     {
         $country = $country ? (string) $country : self::DEFAULT_PRICE_COUNTRY;
+        if ( $max_price === null ) {
+            $max_price = $min_price;
+        }
 
-        $this->prices[$country] = [
-            'country' => $country,
-            'courier' => (string) $courier_price,
-            'terminal' => (string) $terminal_price,
+        $this->createPriceBlockForCountry($country);
+        $this->prices[$country]['courier'] = [
+            'min' => (string) $min_price,
+            'max' => (string) $max_price,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Set Terminal price for given country.
+     * 
+     * @param string|null $country Best ISO 3166-1 alpha-2, eg.: LT, if null or empty string will set as Default
+     * @param string|float $min_price Lowest Terminal price, also write the price in this parameter, if the method has only one price (no ranges).
+     * @param string|float $max_price Highest Terminal price, not necessary if the method has no ranges.
+     * 
+     * @return \Mijora\Omniva\PowerBi\OmnivaPowerBi
+     */
+    public function setTerminalPrice($country, $min_price, $max_price = null)
+    {
+        $country = $country ? (string) $country : self::DEFAULT_PRICE_COUNTRY;
+        if ( $max_price === null ) {
+            $max_price = $min_price;
+        }
+
+        $this->createPriceBlockForCountry($country);
+        $this->prices[$country]['terminal'] = [
+            'min' => (string) $min_price,
+            'max' => (string) $max_price,
         ];
 
         return $this;
@@ -226,5 +254,16 @@ class OmnivaPowerBi
 
         // assume succes on 2xx HTTP code
         return 200 <= $http_code && 300 > $http_code;
+    }
+
+    private function createPriceBlockForCountry($country)
+    {
+        if (!isset($this->prices[$country]) ) {
+            $this->prices[$country] = [
+                'country' => $country,
+                'courier' => null,
+                'terminal' => null,
+            ];
+        }
     }
 }
