@@ -31,8 +31,7 @@ $opb = (new OmnivaPowerBi('0123456', 'secret'))
     ->setOrderCountTerminal(666)
     ->setCourierPrice('LT', 5)
     ->setTerminalPrice('LT', 1, 2.5)
-    ->setCourierPrice('LV', null)
-    ->setTerminalPrice('LV', null)
+    ->setCourierPrice('LV', null) //For LV set only Courier, but price is not set
     ->setCourierPrice('EE', -1)
     ->setTerminalPrice('EE', 3.5)
     ->setCourierPrice('FI', 10)
@@ -70,7 +69,10 @@ this code will generate and send this body
         },
         "LV": {
             "country": "LV",
-            "courier": null,
+            "courier": {
+                "min": "",
+                "max": ""
+            },
             "terminal": null
         },
         "EE": {
