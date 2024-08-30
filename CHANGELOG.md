@@ -1,3 +1,7 @@
+## [Unrelased]
+- created the ability to send statistical data to Omniva PowerBi
+- added that after the formatting function, the type of the measurement values is changed to string to avoid the problem when some servers provide a value with many numbers after the decimal point when converting to json
+
 ## [1.1.0] - Improvements
 - adapted to work with the Omniva OMX server
 

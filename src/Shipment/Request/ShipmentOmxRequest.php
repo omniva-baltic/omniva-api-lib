@@ -137,22 +137,22 @@ class ShipmentOmxRequest implements OmxRequestInterface
         // we always expect weight
         $formated = [
             /* shipments/measurement/weight Number(9.3) Gross Weight */
-            'weight' => $this->getWeightFromMeasure($measures),
+            'weight' => (string) $this->getWeightFromMeasure($measures),
         ];
 
         if ($measures->getLength()) {
             /* shipments/measurement/length Number(5.3) parcel length in m */
-            $formated['length'] = round((float) $measures->getLength(), 3);
+            $formated['length'] = (string) round((float) $measures->getLength(), 3);
         }
 
         if ($measures->getWidth()) {
             /* shipments/measurement/width Number(5.3) parcel width in m */
-            $formated['width'] = round((float) $measures->getWidth(), 3);
+            $formated['width'] = (string) round((float) $measures->getWidth(), 3);
         }
 
         if ($measures->getHeight()) {
             /* shipments/measurement/height Number(5.3) parcel height in m */
-            $formated['height'] = round((float) $measures->getHeight(), 3);
+            $formated['height'] = (string) round((float) $measures->getHeight(), 3);
         }
 
         return $formated;
