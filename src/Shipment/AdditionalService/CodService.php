@@ -75,7 +75,7 @@ class CodService implements AdditionalServiceInterface
      */
     public function setCodAmount($amount)
     {
-        return $this->setParam(self::PARAM_COD_AMOUNT, (float) $amount);
+        return $this->setParam(self::PARAM_COD_AMOUNT, strval((float) $amount));
     }
 
     /**
