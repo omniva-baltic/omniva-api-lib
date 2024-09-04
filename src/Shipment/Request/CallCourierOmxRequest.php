@@ -2,6 +2,8 @@
 
 namespace Mijora\Omniva\Shipment\Request;
 
+use DateTime;
+use DateTimeZone;
 use Mijora\Omniva\Shipment\Package\Contact;
 
 class CallCourierOmxRequest implements OmxRequestInterface
@@ -33,6 +35,9 @@ class CallCourierOmxRequest implements OmxRequestInterface
 
     /** @var bool Default value is false*/
     private $isHeavyPackage = false;
+
+    /** @var string Timezone to use with given start/end time. If not set will use server timezone */
+    private $timezone;
 
     public function setCustomerCode($code)
     {
@@ -95,6 +100,21 @@ class CallCourierOmxRequest implements OmxRequestInterface
     }
 
     /**
+     * Set timezone to use with start/end time for final pickup times configuration.
+     * Timezone example: Europe/Vilnius
+     * 
+     * @param string $timezone
+     * 
+     * @return \Mijora\Omniva\Shipment\Request\CallCourierOmxRequest
+     */
+    public function setTimezone($timezone = 'UTC')
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getOmxApiEndpoint()
@@ -117,15 +137,32 @@ class CallCourierOmxRequest implements OmxRequestInterface
     {
         $address = $this->contact->getAddress();
 
-        /* Rather ugly pickup time calculation. Posible rework to make it more sensible */
-        $pickDay = date('Y-m-d');
-        if (time() > strtotime($pickDay . ' ' . $this->startTime)) {
-            $pickDay = date('Y-m-d', strtotime($pickDay . "+1 days"));
+        $utc_timezone = new DateTimeZone("UTC");
+        try {
+            $timezone = $this->timezone ? new DateTimeZone($this->timezone) : new DateTimeZone(date_default_timezone_get());
+        } catch (\Throwable $th) {
+            $timezone = new DateTimeZone(date_default_timezone_get());
         }
-        // "2023-03-30T20:18:00.000" - using gmdate to convert server time to UTC
-        $start = gmdate("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->startTime)) . '.000';
-        $finish = gmdate("Y-m-d\TH:i:s", strtotime($pickDay . ' ' . $this->endTime)) . '.000';
-        /* Pickup time data calculations end */
+
+        // Make start datetime
+        $start_h_m = explode(':', $this->startTime);
+        $start_datetime = new DateTime("now", $timezone);
+        $start_datetime->setTime((int) $start_h_m[0], (int) $start_h_m[1]);
+
+        // Make end datetime
+        $end_h_m = explode(':', $this->endTime);
+        $end_datetime = new DateTime("now", $timezone);
+        $end_datetime->setTime((int) $end_h_m[0], (int) $end_h_m[1]);
+
+        // Check if pickup time is in future, if not move both start and end dates to next day
+        if ((new DateTime("now", $timezone)) > $start_datetime) {
+            $start_datetime->modify('+1 day');
+            $end_datetime->modify('+1 day');
+        }
+
+        // Convert the DateTime object to UTC
+        $start_datetime->setTimezone($utc_timezone);
+        $end_datetime->setTimezone($utc_timezone);
 
         $body = [
             'customerCode' => (string) $this->customerCode,
@@ -137,8 +174,8 @@ class CallCourierOmxRequest implements OmxRequestInterface
                 'country' => $address->getCountry(),
                 'street' => $address->getStreet(),
             ],
-            'startTime' => $start, //"2023-03-30T20:18:00.000",
-            'endTime' => $finish, //"2023-03-30T20:19:00.000",
+            'startTime' => $start_datetime->format("Y-m-d\TH:i:s") . '.000', //"2023-03-30T20:18:00.000",
+            'endTime' => $end_datetime->format("Y-m-d\TH:i:s") . '.000', //"2023-03-30T20:19:00.000",
             'isTwoManPickup' => $this->isTwoManPickup,
             'isHeavyPackage' => $this->isHeavyPackage,
             'packageCount' => $this->packageCount > 1 ? $this->packageCount : 1,

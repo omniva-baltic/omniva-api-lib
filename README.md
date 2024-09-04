@@ -228,6 +228,7 @@ Anytime during setup or when calling api Exception can be thrown with errors.
         ->setComment('Third door on he left') // set comment for courier. New with OMX
         ->setIsHeavyPackage(true) // set true if any of packages >30kg, default is false. New with OMX
         ->setIsTwoManPickup(false) // set true if pickup requires two people. Default is false. New with OMX
+        ->setTimezone('Europe/Vilnius') // set timezone to use for calculation of pickup date time. New with OMX
         ->setParcelsNumber(3); // specify how many packages will be handed over to the courier
     
     $pickup_call_id = $call->callCourier(); // make a call, returns call ID which can be used to cancel pickup call

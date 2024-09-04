@@ -37,6 +37,9 @@ class CallCourier
     /** @var bool Flag to mark there is packages heavier than 30Kg. OMX Only */
     private $isHeavyPackage = false;
     
+    /** @var string|null Timezone to use when calculating pickup datetime. OMX Only */
+    private $timezone;
+    
     /** @var array|bool Holds call response body - on failed call will be FALSE. OMX Only */
     private $response;
     
@@ -223,6 +226,7 @@ class CallCourier
         return (new CallCourierOmxRequest())
             ->setCustomerCode($this->request->getUsername())
             ->setPickupContact($this->sender)
+            ->setTimezone($this->timezone)
             ->setStartTime($this->earliestPickupTime)
             ->setEndTime($this->latestPickupTime)
             ->setComment($this->getComment())
@@ -413,6 +417,20 @@ class CallCourier
     public function setDestinationCountry($destinationCountry)
     {
         $this->destinationCountry = $destinationCountry;
+        return $this;
+    }
+
+    /**
+     * OMX only. Set timezone for pickup times.
+     * 
+     * @param string $timezone example Europe/Vilnius
+     * 
+     * @return CallCourier
+     */
+    public function setTimezone($timezone)
+    {
+        $this->timezone = (string) $timezone;
+
         return $this;
     }
 }
