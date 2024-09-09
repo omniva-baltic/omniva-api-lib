@@ -472,6 +472,12 @@ class Package
         if (!$senderContact->getPersonName())
             throw new OmnivaException("Incorrect XML data provided in contact section: person_name is required.");
         $this->validateAddress($senderContact->getAddress(), true);
+
+        // for backwards compatibility, add personName as altName if altName is not set
+        if (!$senderContact->getAltName()) {
+            $senderContact->setAltName($senderContact->getPersonName());
+        }
+
         $this->senderContact = $senderContact;
         return $this;
     }
