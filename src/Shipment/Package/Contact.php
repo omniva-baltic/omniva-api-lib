@@ -17,6 +17,14 @@ class Contact
     private $companyName;
 
     /**
+     * Value is used on label as sender name in case this needs to be different to the partner name.
+     * This value is also used in notification messages to sender. OMX
+     * 
+     * @var string
+     */
+    private $altName;
+
+    /**
      * @var Address
      */
     private $address;
@@ -145,6 +153,28 @@ class Contact
     }
 
     /**
+     * @return string
+     */
+    public function getAltName()
+    {
+        return $this->altName;
+    }
+
+    /**
+     * Value is used on label as sender name in case this needs to be different to the partner name.
+     * This value is also used in notification messages to sender.
+     * OMX Only
+     * 
+     * @param string $altName Name to display on labels. Will be trimmed to 50 symbols
+     * @return Contact
+     */
+    public function setAltName($altName)
+    {
+        $this->altName = mb_substr($altName, 0, 50);
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getAddresseeForOmx($delivery_channel = null)
@@ -156,12 +186,18 @@ class Contact
             'personName' => Helper::escapeForApi($this->getPersonName()),
         ];
 
+        if ($this->getAltName()) {
+            $addressee['altName'] = Helper::escapeForApi($this->getAltName());
+        }
+
         if ($this->getPhone()) {
             $addressee['contactPhone'] = Helper::escapeForApi($this->getPhone());
         }
 
         if ($this->getCompanyName()) {
             $addressee['companyName'] = Helper::escapeForApi($this->getCompanyName());
+            // if companyName is used need to remove personName as both cant be present
+            unset($addressee['personName']);
         }
 
         return $addressee;
