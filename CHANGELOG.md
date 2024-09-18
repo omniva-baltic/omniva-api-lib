@@ -4,6 +4,7 @@
 - added COD amount value to be converted to string to avoid value with many decimal numbers issue on some servers
 - CallCourierOmxRequest (and CallCourier for backwards compatibility) now accepts timezone for better calculation of pickup datetime, if not set uses server timezone
 - altName tag support for sender contact. When setting sender contact onto package it will automaticaly fill altName with personName if altName was not set on sender contact
+- preparations for non Baltic states shipments (servicePackageHelper)
 
 ## [1.1.0] - Improvements
 - adapted to work with the Omniva OMX server
