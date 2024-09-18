@@ -292,10 +292,15 @@ class Shipment
         $omxRequest->customerCode = $header->getSenderCd();
         $omxRequest->fileId = $header->getFileId();
         
+        // legacy comment was on main shipment
+        $shipmentComment = $this->getComment();
+
         $packages = $this->getPackages();
         foreach ($packages as $package) {
-            // legacy comment was on main shipment
-            $package->setComment($this->getComment());
+            // add comment from shipment if package does not have it
+            if ($shipmentComment && !$package->getComment()) {
+                $package->setComment($shipmentComment);
+            }
 
             $omxRequest->addShipment($package);
         }
