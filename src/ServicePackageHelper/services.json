@@ -1,0 +1,890 @@
+{
+    "AT": {
+        "country": "Austria",
+        "iso": "AT",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "BE": {
+        "country": "Belgium",
+        "iso": "BE",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "BG": {
+        "country": "Bulgaria",
+        "iso": "BG",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "CY": {
+        "country": "Cyprus",
+        "iso": "CY",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "CZ": {
+        "country": "Czech Republic",
+        "iso": "CZ",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "DE": {
+        "country": "Germany",
+        "iso": "DE",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "DK": {
+        "country": "Denmark",
+        "iso": "DK",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "ES": {
+        "country": "Spain",
+        "iso": "ES",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "FI": {
+        "country": "Finland",
+        "iso": "FI",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1,
+                    "total": 2.4
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1,
+                    "total": 2.4
+                },
+                "insurance": 500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "FR": {
+        "country": "France",
+        "iso": "FR",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "GR": {
+        "country": "Greece",
+        "iso": "GR",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "HR": {
+        "country": "Croatia",
+        "iso": "HR",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "HU": {
+        "country": "Hungary",
+        "iso": "HU",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "IE": {
+        "country": "Ireland",
+        "iso": "IE",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "IT": {
+        "country": "Italy",
+        "iso": "IT",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "LU": {
+        "country": "Luxembourg",
+        "iso": "LU",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "MT": {
+        "country": "Malta",
+        "iso": "MT",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "NL": {
+        "country": "Netherlands",
+        "iso": "NL",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "PL": {
+        "country": "Poland",
+        "iso": "PL",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "PT": {
+        "country": "Portugal",
+        "iso": "PT",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "RO": {
+        "country": "Romnia",
+        "iso": "RO",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "SE": {
+        "country": "Sweden",
+        "iso": "SE",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "SI": {
+        "country": "Slovenia",
+        "iso": "SI",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    },
+    "SK": {
+        "country": "Slovakia",
+        "iso": "SK",
+        "eu": true,
+        "package": {
+            "premium": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": 4500,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "standard": {
+                "maxWeightKg": 30,
+                "maxDimensionsM": {
+                    "longestSide": 1.5,
+                    "total": 3
+                },
+                "insurance": false,
+                "podCanAdd": false,
+                "podIncluded": true
+            },
+            "economy": {
+                "maxWeightKg": 2,
+                "maxDimensionsM": {
+                    "longestSide": 0.06,
+                    "total": 1.2
+                },
+                "insurance": false,
+                "podCanAdd": true,
+                "podIncluded": false
+            }
+        }
+    }
+}
