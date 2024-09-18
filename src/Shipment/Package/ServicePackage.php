@@ -128,7 +128,7 @@ class ServicePackage
     }
 
     /**
-     * Checks code validity. If main service code is given also check if code is allowed for given main service
+     * Checks if code is valid. If main service code is given also check if code is allowed for given main service
      * 
      * @param string $code Service package code to check
      * @param string|null $main_service Main service code to check $code availability in
@@ -153,5 +153,17 @@ class ServicePackage
         }
 
         return true;
+    }
+
+    /**
+     * Checks code validity.
+     * 
+     * @param string $code Service package code to check
+     * 
+     * @return bool Returns true if code is valid
+     */
+    public static function isCodeValid($code)
+    {
+        return in_array($code, self::CODE_ALL);
     }
 }
