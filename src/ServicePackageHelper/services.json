@@ -27,7 +27,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -64,7 +64,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -101,7 +101,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -138,7 +138,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -175,7 +175,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -212,7 +212,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -249,7 +249,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -286,7 +286,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -323,7 +323,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -360,7 +360,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -397,7 +397,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -434,7 +434,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -471,7 +471,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -508,7 +508,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -545,7 +545,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -582,7 +582,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -619,7 +619,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -656,7 +656,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -693,7 +693,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -730,7 +730,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -767,7 +767,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -804,7 +804,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -841,7 +841,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
@@ -878,7 +878,7 @@
             "economy": {
                 "maxWeightKg": 2,
                 "maxDimensionsM": {
-                    "longestSide": 0.06,
+                    "longestSide": 0.60,
                     "total": 1.2
                 },
                 "insurance": false,
