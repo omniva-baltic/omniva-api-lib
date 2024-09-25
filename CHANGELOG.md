@@ -1,4 +1,4 @@
-## [Unrelased]
+## [1.2.0]
 - created the ability to send statistical data to Omniva PowerBi
 - added that after the formatting function, the type of the measurement values is changed to string to avoid the problem when some servers provide a value with many numbers after the decimal point when converting to json
 - added COD amount value to be converted to string to avoid value with many decimal numbers issue on some servers
