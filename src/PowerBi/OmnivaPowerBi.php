@@ -4,14 +4,15 @@ namespace Mijora\Omniva\PowerBi;
 
 class OmnivaPowerBi
 {
-    const ENDPOINT = '';
+    const ENDPOINT = 'https://flow.omniva.ee/api/v1/data';
+    const ENDPOINT_TEST = 'https://pre-flow.omniva.ee/api/v1/data';
 
     const DEFAULT_TIMESTAMP = '0000-00-00 00:00:00';
 
     const DEFAULT_PRICE_COUNTRY = 'Default';
 
+    private $use_test_endpoint = false;
     private $username;
-    private $password;
     private $plugin_version;
     private $platform;
     private $sender_name;
@@ -21,10 +22,14 @@ class OmnivaPowerBi
     private $order_count_timestamp = self::DEFAULT_TIMESTAMP;
     private $prices = [];
 
-    public function __construct($username, $password)
+    /**
+     * @param string $username Omniva API username
+     * @param bool $use_test_endpoint should data be sent to test endpoint, default FALSE
+     */
+    public function __construct($username, $use_test_endpoint = false)
     {
         $this->username = (string) $username;
-        $this->password = (string) $password;
+        $this->use_test_endpoint = (bool) $use_test_endpoint;
     }
 
     /**
@@ -206,7 +211,7 @@ class OmnivaPowerBi
      */
     public function send()
     {
-        if (!self::ENDPOINT) {
+        if (!self::ENDPOINT || ($this->use_test_endpoint && !self::ENDPOINT_TEST)) {
             return false;
         }
 
@@ -235,13 +240,12 @@ class OmnivaPowerBi
 
         $curl = curl_init();
         curl_setopt_array($curl, [
-            CURLOPT_URL => self::ENDPOINT,
+            CURLOPT_URL => $this->use_test_endpoint ? self::ENDPOINT_TEST : self::ENDPOINT,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 0,
-            CURLOPT_USERPWD => $this->username . ':' . $this->password,
             CURLOPT_TIMEOUT => 10,
             CURLOPT_POSTFIELDS => $body,
         ]);

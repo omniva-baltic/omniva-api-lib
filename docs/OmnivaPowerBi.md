@@ -4,7 +4,12 @@ OmnivaPowerBi class is responsible for sending given data to Omniva PowerBI. It 
 
 ## Usage
 
-Usage is simple, initialize OmnivaPowerBi with user API key and password (**Note: this could change, as currently it is no known how authorization will work**).
+Usage is simple, initialize OmnivaPowerBi with user API key (**Note: this could change, as currently it is no known how authorization will work**).
+
+To send data to test endpoint pass second param `TRUE`:
+```php
+$opb = new OmnivaPowerBi('0123456', true);
+```
 
 And pass collected data:
 - `setPluginVersion(string version)` - Plugin version
@@ -21,7 +26,7 @@ Example:
 ```php
 use Mijora\Omniva\PowerBi\OmnivaPowerBi;
 
-$opb = (new OmnivaPowerBi('0123456', 'secret'))
+$opb = (new OmnivaPowerBi('0123456'))
     ->setPluginVersion('1.2.2')
     ->setPlatform('Opencart v2.0.0')
     ->setSenderName('Testas UAB')
