@@ -7,7 +7,7 @@ class OmnivaPowerBi
     const ENDPOINT = 'https://flow.omniva.ee/api/v1/data';
     const ENDPOINT_TEST = 'https://pre-flow.omniva.ee/api/v1/data';
 
-    const DEFAULT_TIMESTAMP = '0000-00-00 00:00:00';
+    const DEFAULT_TIMESTAMP = '1990-01-01 00:00:00';
 
     const DEFAULT_PRICE_COUNTRY = 'Default';
 
