@@ -183,11 +183,11 @@ class Contact
             'address' => $this->getAddress()->getAddressForOmx($delivery_channel),
             'contactEmail' => Helper::escapeForApi($this->getEmail(), Helper::ESCAPE_FOR_API_TYPE_EMAIL),
             'contactMobile' => Helper::escapeForApi($this->getMobile()),
-            'personName' => Helper::escapeForApi($this->getPersonName()),
+            'personName' => $this->getPersonName(),
         ];
 
         if ($this->getAltName()) {
-            $addressee['altName'] = Helper::escapeForApi($this->getAltName());
+            $addressee['altName'] = $this->getAltName();
         }
 
         if ($this->getPhone()) {
@@ -195,7 +195,7 @@ class Contact
         }
 
         if ($this->getCompanyName()) {
-            $addressee['companyName'] = Helper::escapeForApi($this->getCompanyName());
+            $addressee['companyName'] = $this->getCompanyName();
             // if companyName is used need to remove personName as both cant be present
             unset($addressee['personName']);
         }
