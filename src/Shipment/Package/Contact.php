@@ -10,7 +10,7 @@ class Contact
      * @var string
      */
     private $personName;
-    
+
     /**
      * @var string
      */
@@ -175,12 +175,14 @@ class Contact
     }
 
     /**
+     * @param bool $offloadPostcodeFormat if set to TRUE will address formated for offloadPostcode 
+     * 
      * @return array
      */
-    public function getAddresseeForOmx($delivery_channel = null)
+    public function getAddresseeForOmx($offloadPostcodeFormat = false)
     {
         $addressee = [
-            'address' => $this->getAddress()->getAddressForOmx($delivery_channel),
+            'address' => $this->getAddress()->getAddressForOmx($offloadPostcodeFormat),
             'contactEmail' => Helper::escapeForApi($this->getEmail(), Helper::ESCAPE_FOR_API_TYPE_EMAIL),
             'contactMobile' => Helper::escapeForApi($this->getMobile()),
             'personName' => $this->getPersonName(),

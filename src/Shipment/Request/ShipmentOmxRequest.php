@@ -49,15 +49,21 @@ class ShipmentOmxRequest implements OmxRequestInterface
                 $shipment['deliveryChannel'] = $package->getChannel();
             }
 
+            // check if we need offloadPostcode
+            $offloadPostcodeRequired = Package::isOffloadPostcodeRequired($package);
+
             $shipment = array_merge($shipment, [
                 'shipmentComment' => $package->getComment(),
                 'returnAllowed' => $package->getReturnAllowed(),
                 'paidByReceiver' => $package->getPaidByReceiver(),
                 'partnerShipmentId' => $package_id,
-                'measurement' => $this->formatMeasures($package->getMeasures()),
-                'receiverAddressee' => $package->getReceiverContact()->getAddresseeForOmx($package->getChannel()),
+                'receiverAddressee' => $package->getReceiverContact()->getAddresseeForOmx($offloadPostcodeRequired),
                 'senderAddressee' => $package->getSenderContact()->getAddresseeForOmx(),
             ]);
+
+            if ($package->getMeasures() instanceof Measures) {
+                $shipment['measurement'] = $this->formatMeasures($package->getMeasures());
+            }
 
             $service_package = $package->getServicePackage();
             if ($service_package && ServicePackage::checkCode($service_package->getCode(), $main_service)) {
@@ -213,6 +219,7 @@ class ShipmentOmxRequest implements OmxRequestInterface
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $body = [

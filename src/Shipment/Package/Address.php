@@ -122,11 +122,11 @@ class Address
         return $this;
     }
 
-    public function getAddressForOmx($delivery_channel = null)
+    public function getAddressForOmx($offloadPostcodeFormat = false)
     {
-        if ($delivery_channel && Package::isOffloadPostcodeRequired($delivery_channel)) {
+        if ($offloadPostcodeFormat || $this->getOffloadPostcode()) {
             if (!$this->getOffloadPostcode()) {
-                throw new OmnivaException($delivery_channel . " requires offloadPostcode to be set");
+                throw new OmnivaException("Missing offloadPostcode");
             }
 
             return [
