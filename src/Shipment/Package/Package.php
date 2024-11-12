@@ -30,15 +30,31 @@ class Package
     const CHANNEL_PARCEL_MACHINE = 'PARCEL_MACHINE';
     const CHANNEL_POST_OFFICE = 'POST_OFFICE';
     const CHANNEL_COURIER = 'COURIER';
+    /** @deprecated No longer used */
     const CHANNEL_PICK_UP_POINT = 'PICK_UP_POINT';
 
     const CHANNEL_ALL = [
         self::CHANNEL_COURIER,
         self::CHANNEL_PARCEL_MACHINE,
-        self::CHANNEL_PICK_UP_POINT,
         self::CHANNEL_POST_OFFICE,
     ];
 
+    /** 
+     * OffloadPostcode mandatory if match these rules main_service => [channel => servicePackage]. 
+     * If ServicePackage list is not defined (left empty array), means required for whole main service + channel combo
+     */
+    const REQUIRES_OFFLOAD_POSTCODE = [
+        self::MAIN_SERVICE_PARCEL => [
+            self::CHANNEL_PARCEL_MACHINE => [],
+        ],
+        self::MAIN_SERVICE_LETTER => [
+            self::CHANNEL_POST_OFFICE => [
+                ServicePackage::CODE_PROCEDURAL_DOCUMENT,
+            ],
+        ]
+    ];
+
+    /** @deprecated since v1.3 - switched to better formated ruleset REQUIRES_OFFLOAD_POSTCODE */
     const CHANNEL_REQUIRES_OFFLOAD_POSTCODE = [
         self::CHANNEL_PARCEL_MACHINE,
         self::CHANNEL_PICK_UP_POINT,
@@ -54,7 +70,10 @@ class Package
             self::CHANNEL_PICK_UP_POINT
         ],
 
-        self::MAIN_SERVICE_LETTER => [], // currently not used
+        self::MAIN_SERVICE_LETTER => [
+            self::CHANNEL_COURIER,
+            self::CHANNEL_POST_OFFICE,
+        ],
 
         self::MAIN_SERVICE_PALLET => [
             self::CHANNEL_COURIER
@@ -285,7 +304,7 @@ class Package
                 $channel = self::CHANNEL_PARCEL_MACHINE;
             } elseif (in_array($main_service, self::LEGACY_SERVICES_PICK_UP_POINT)) { // Parcel - Pickup Point
                 $main_service = self::MAIN_SERVICE_PARCEL;
-                $channel = self::CHANNEL_PICK_UP_POINT;
+                $channel = self::CHANNEL_PARCEL_MACHINE;
 
                 // in previous version CD was service for Finland terminals, requires servicePackage in OMX
                 if ($this->service === 'CD') {
@@ -399,7 +418,7 @@ class Package
     }
 
     /**
-     * @return Measures
+     * @return Measures|null
      */
     public function getMeasures()
     {
@@ -497,7 +516,7 @@ class Package
     public function setReceiverContact($receiverContact)
     {
         if (!$receiverContact->getPersonName())
-            throw new OmnivaException("Incorrect XML data provided in contact section: person_name is required.");
+            throw new OmnivaException("Incorrect data provided in contact section: person_name is required.");
         $this->validateAddress($receiverContact->getAddress(), false);
         $this->receiverContact = $receiverContact;
         return $this;
@@ -515,13 +534,13 @@ class Package
     public function validateAddress($address, $sender = false)
     {
         $address_type = $sender ? 'sender' : 'receiver';
-        $error_prefix = "Incorrect XML data provided in $address_type contact section: ";
+        $error_prefix = "Incorrect data provided in $address_type contact section: ";
 
         if (!$address->getCountry()) {
             throw new OmnivaException($error_prefix . "country is required.");
         }
 
-        if ($sender || !self::isOffloadPostcodeRequired($this->channel) && !$address->getPostcode()) {
+        if ($sender || !self::isOffloadPostcodeRequired($this) && !$address->getPostcode()) {
             if (!$address->getPostcode()) {
                 throw new OmnivaException($error_prefix . "postcode is required.");
             }
@@ -529,13 +548,6 @@ class Package
             if (!$address->getDeliveryPoint()) {
                 throw new OmnivaException($error_prefix . "delivery point is required.");
             }
-        }
-
-        if (!$sender && self::isOffloadPostcodeRequired($this->channel) && !$address->getOffloadPostcode()) {
-            throw new OmnivaException(
-                $error_prefix . "offloadPostcode is required, when using delivery channel "
-                    . implode(', ', Package::CHANNEL_REQUIRES_OFFLOAD_POSTCODE) . "."
-            );
         }
     }
 
@@ -605,11 +617,34 @@ class Package
     }
 
     /**
-     * @param string $delivery_channel Delivery channel code to check for required offloadPostcode
+     * @param Package $package package object to check for required offloadPostcode
      */
-    public static function isOffloadPostcodeRequired($delivery_channel = null)
+    public static function isOffloadPostcodeRequired(Package $package = null)
     {
-        return in_array($delivery_channel, self::CHANNEL_REQUIRES_OFFLOAD_POSTCODE);
+        if (!($package instanceof Package)) {
+            return false;
+        }
+
+        $servicePackage = $package->getServicePackage();
+
+        $servicePackageCode = null;
+        // check for offload exceptions
+        if ($servicePackage instanceof ServicePackage) {
+            $servicePackageCode = $servicePackage->getCode();
+        }
+
+        // check if we have defined rules
+        if (isset(self::REQUIRES_OFFLOAD_POSTCODE[$package->getMainService()][$package->getChannel()])) {
+            // if not servicePackage list means required
+            if (!self::REQUIRES_OFFLOAD_POSTCODE[$package->getMainService()][$package->getChannel()]) {
+                return true;
+            }
+
+            return in_array($servicePackageCode, self::REQUIRES_OFFLOAD_POSTCODE[$package->getMainService()][$package->getChannel()]); 
+        }
+
+        // default not required
+        return false;
     }
 
     /**

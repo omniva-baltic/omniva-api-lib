@@ -12,22 +12,23 @@ class Measures
     private $weight;
 
     /**
+     * @deprecated Not used with OMX
      * @var int
      */
     private $volume;
 
     /**
-     * @var int
+     * @var float
      */
     private $width;
 
     /**
-     * @var int
+     * @var float
      */
     private $height;
 
     /**
-     * @var int
+     * @var float
      */
     private $length;
 
@@ -40,7 +41,7 @@ class Measures
     }
 
     /**
-     * @param float $weight
+     * @param float $weight Gross weight in kilograms
      * @return Measures
      */
     public function setWeight($weight)
@@ -50,6 +51,8 @@ class Measures
     }
 
     /**
+     * @deprecated Not used with OMX
+     * 
      * @return int
      */
     public function getVolume()
@@ -58,6 +61,8 @@ class Measures
     }
 
     /**
+     * @deprecated Not used with OMX
+     * 
      * @param int $volume
      * @return Measures
      */
@@ -68,7 +73,7 @@ class Measures
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getWidth()
     {
@@ -76,7 +81,7 @@ class Measures
     }
 
     /**
-     * @param int $width
+     * @param float $width Shipment width in m, the separator for the fraction is a decimal point
      * @return Measures
      */
     public function setWidth($width)
@@ -86,7 +91,7 @@ class Measures
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getHeight()
     {
@@ -94,7 +99,7 @@ class Measures
     }
 
     /**
-     * @param int $height
+     * @param float $height Shipment height in m, the separator for the fraction is a decimal point
      * @return Measures
      */
     public function setHeight($height)
@@ -104,7 +109,7 @@ class Measures
     }
 
     /**
-     * @return int
+     * @return float 
      */
     public function getLength()
     {
@@ -112,7 +117,7 @@ class Measures
     }
 
     /**
-     * @param int $length
+     * @param float $length Shipment length in m, the separator for the fraction is a decimal point
      * @return Measures
      */
     public function setLength($length)
