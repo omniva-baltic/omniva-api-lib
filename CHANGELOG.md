@@ -1,3 +1,9 @@
+## [Unreleased]
+- **Breaking change**: changed how Package::isOffloadPostcodeRequired() function works, now it expects to be given Package object, with main service, channel and servicePackage (if applied)
+- if offloadPostcode is set on receiver Address object, when getting receiver address for registration it will return array with offloadPostcode format
+- enabled LETTER main service, most validations left for Omniva API side
+- added additional services for LETTER main service
+
 ## [1.2.1]
 - changed default date time for PowerBi to be 1990-01-01 00:00:00
 - Contact personName, altName and companyName fields now allows double quotes
