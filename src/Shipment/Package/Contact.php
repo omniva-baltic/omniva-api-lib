@@ -207,7 +207,7 @@ class Contact
 
     private function getCountryCode()
     {
-        return (isset($this->getAddress()) && isset($this->getAddress()->getCountry())) ? $this->getAddress()->getCountry() : '';
+        return $this->getAddress() ? $this->getAddress()->getCountry() : null;
     }
 
     private function convertPhoneNumberToInternational($phoneNumber, $countryCode)
