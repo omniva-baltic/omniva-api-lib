@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.3.1]
 - added phone number conversion to international format for Lithuania
 
 ## [1.3.0]
