@@ -103,7 +103,7 @@ class Contact
      */
     public function getPhone()
     {
-        return $this->convertPhoneNumberToInternational($this->phone);
+        return $this->convertPhoneNumberToInternational($this->phone, $this->getCountryCode());
     }
 
     /**
@@ -121,7 +121,7 @@ class Contact
      */
     public function getMobile()
     {
-        return $this->convertPhoneNumberToInternational($this->mobile);
+        return $this->convertPhoneNumberToInternational($this->mobile, $this->getCountryCode());
     }
 
     /**
@@ -205,22 +205,23 @@ class Contact
         return $addressee;
     }
 
-    private function convertPhoneNumberToInternational($phoneNumber)
+    private function getCountryCode()
     {
-        $plus = (strpos($phoneNumber, '+') === 0) ? '+' : '';
-        $phoneNumber = preg_replace('/\D+/', '', $phoneNumber);
-        $address = $this->getAddress();
+        return (isset($this->getAddress()) && isset($this->getAddress()->getCountry())) ? $this->getAddress()->getCountry() : '';
+    }
 
-        if (!$address || empty($phoneNumber) || !$address->getCountry()) {
-            return $plus . $phoneNumber;
+    private function convertPhoneNumberToInternational($phoneNumber, $countryCode)
+    {
+        if (empty($phoneNumber) || empty($countryCode)) {
+            return $phoneNumber;
         }
+        $formatedPhoneNumber = preg_replace('/[^\d+]/', '', $phoneNumber);
         
-        $countryCode = strtoupper($address->getCountry());
-        switch ($countryCode) {
+        switch (strtoupper($countryCode)) {
             case 'LT':
-                return preg_replace('/^(8|0|370)?(\d{8})$/', '+370$2', $phoneNumber);
+                return preg_replace('/^(8|0|370|00370)?(\d{8})$/', '+370$2', $formatedPhoneNumber);
         }
 
-        return $plus . $phoneNumber;
+        return $phoneNumber;
     }
 }
