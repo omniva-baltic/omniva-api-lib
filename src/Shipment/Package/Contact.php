@@ -103,7 +103,7 @@ class Contact
      */
     public function getPhone()
     {
-        return $this->phone;
+        return $this->convertPhoneNumberToInternational($this->phone);
     }
 
     /**
@@ -121,7 +121,7 @@ class Contact
      */
     public function getMobile()
     {
-        return $this->mobile;
+        return $this->convertPhoneNumberToInternational($this->mobile);
     }
 
     /**
@@ -203,5 +203,24 @@ class Contact
         }
 
         return $addressee;
+    }
+
+    private function convertPhoneNumberToInternational($phoneNumber)
+    {
+        $plus = (strpos($phoneNumber, '+') === 0) ? '+' : '';
+        $phoneNumber = preg_replace('/\D+/', '', $phoneNumber);
+        $address = $this->getAddress();
+
+        if (!$address || empty($phoneNumber) || !$address->getCountry()) {
+            return $plus . $phoneNumber;
+        }
+        
+        $countryCode = strtoupper($address->getCountry());
+        switch ($countryCode) {
+            case 'LT':
+                return preg_replace('/^(8|0|370)?(\d{8})$/', '+370$2', $phoneNumber);
+        }
+
+        return $plus . $phoneNumber;
     }
 }
