@@ -1,3 +1,6 @@
+## [1.3.2]
+- added `X-Integration-Agent-Id` header to all API calls with value of constant `_OMNIVA_INTEGRATION_AGENT_ID_` if it is defined
+
 ## [1.3.1]
 - added phone number conversion to international format for Lithuania
 
