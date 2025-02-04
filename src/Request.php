@@ -413,6 +413,10 @@ class Request
             "Pragma: no-cache",
         );
 
+        if (defined('_OMNIVA_INTEGRATION_AGENT_ID_')) {
+            $headers[] = "X-Integration-Agent-Id: Developer_" . str_replace(' ', '_', _OMNIVA_INTEGRATION_AGENT_ID_);
+        }
+
         if ($request->getRequestMethod() === OmxRequestInterface::REQUEST_METHOD_POST) {
             $headers[] = "Content-length: " . mb_strlen($body);
         }
