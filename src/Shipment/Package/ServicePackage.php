@@ -12,6 +12,7 @@ class ServicePackage
     const CODE_PROCEDURAL_DOCUMENT = 'PROCEDURAL_DOCUMENT';
     const CODE_REGISTERED_LETTER = 'REGISTERED_LETTER';
     const CODE_REGISTERED_MAXILETTER = 'REGISTERED_MAXILETTER';
+    const CODE_EXPRESS_LETTER = 'EXPRESS_LETTER';
 
     const CODE_ALL = [
         self::CODE_ECONOMY,
@@ -20,6 +21,7 @@ class ServicePackage
         self::CODE_PROCEDURAL_DOCUMENT,
         self::CODE_REGISTERED_LETTER,
         self::CODE_REGISTERED_MAXILETTER,
+        self::CODE_EXPRESS_LETTER,
     ];
 
     const CODE_AVAILABILITY = [
@@ -32,6 +34,7 @@ class ServicePackage
             self::CODE_PROCEDURAL_DOCUMENT,
             self::CODE_REGISTERED_LETTER,
             self::CODE_REGISTERED_MAXILETTER,
+            self::CODE_EXPRESS_LETTER,
         ],
     ];
 
