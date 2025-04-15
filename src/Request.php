@@ -56,6 +56,16 @@ class Request
         if (!empty($password)) $this->setPassword($password);
         if (!empty($api_url_domain)) $this->setApiUrlDomain($api_url_domain);
         $this->enableDebug($debug);
+
+        if (defined('_OMNIVA_API_USE_TEST_OMX_')) {
+            $this->setUseTestOmxApi(_OMNIVA_API_USE_TEST_OMX_);
+        }
+        if (defined('_OMNIVA_API_USERNAME_')) {
+            $this->setUsername(_OMNIVA_API_USERNAME_);
+        }
+        if (defined('_OMNIVA_API_PASSWORD_')) {
+            $this->setPassword(_OMNIVA_API_PASSWORD_);
+        }
     }
 
     /**
@@ -347,6 +357,10 @@ class Request
             );
         }
 
+        if (defined('_OMNIVA_API_CURL_TIMEOUT_')) {
+            $this->setCurlTimeout(_OMNIVA_API_CURL_TIMEOUT_);
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -357,7 +371,7 @@ class Request
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
         }
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->getCurlTimeout());
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
@@ -419,6 +433,10 @@ class Request
 
         if ($request->getRequestMethod() === OmxRequestInterface::REQUEST_METHOD_POST) {
             $headers[] = "Content-length: " . mb_strlen($body);
+        }
+
+        if (defined('_OMNIVA_API_CURL_TIMEOUT_')) {
+            $this->setCurlTimeout(_OMNIVA_API_CURL_TIMEOUT_);
         }
 
         $curl = curl_init();
