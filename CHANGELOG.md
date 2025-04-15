@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.3.3]
 - added the ability to enable OMX test mode via a constant `_OMNIVA_API_USE_TEST_OMX_`
 - added ability to change username via constant `_OMNIVA_API_USERNAME_`
 - added ability to change password via constant `_OMNIVA_API_PASSWORD_`
