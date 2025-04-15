@@ -29,6 +29,7 @@ class Package
 
     const CHANNEL_PARCEL_MACHINE = 'PARCEL_MACHINE';
     const CHANNEL_POST_OFFICE = 'POST_OFFICE';
+    const CHANNEL_POST_BOX = 'POST_BOX';
     const CHANNEL_COURIER = 'COURIER';
     /** @deprecated No longer used */
     const CHANNEL_PICK_UP_POINT = 'PICK_UP_POINT';
@@ -37,6 +38,7 @@ class Package
         self::CHANNEL_COURIER,
         self::CHANNEL_PARCEL_MACHINE,
         self::CHANNEL_POST_OFFICE,
+        self::CHANNEL_POST_BOX,
     ];
 
     /** 
@@ -73,6 +75,7 @@ class Package
         self::MAIN_SERVICE_LETTER => [
             self::CHANNEL_COURIER,
             self::CHANNEL_POST_OFFICE,
+            self::CHANNEL_POST_BOX,
         ],
 
         self::MAIN_SERVICE_PALLET => [
