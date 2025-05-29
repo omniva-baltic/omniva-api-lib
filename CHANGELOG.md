@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.3.4]
 - fixed the size of packages for international shipments to be calculated using the formula `longest_edge + 2 x (middle_edge + shortest_edge)`
 
 ## [1.3.3]
