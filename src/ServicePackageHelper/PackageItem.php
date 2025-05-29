@@ -31,13 +31,13 @@ class PackageItem
             return round($this->length * 4, 2);
         }
 
-        $min = min($this->length, $this->width, $this->height);
+        $max = max($this->length, $this->width, $this->height);
 
         $perimeter = 0;
-        $min_skipped = false;
+        $max_skipped = false;
         foreach ([$this->length, $this->width, $this->height] as $side) {
-            if (!$min_skipped && $side === $min) {
-                $min_skipped = true;
+            if (!$max_skipped && $side === $max) {
+                $max_skipped = true;
                 continue;
             }
 
