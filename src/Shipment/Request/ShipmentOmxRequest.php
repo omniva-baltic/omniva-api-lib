@@ -90,7 +90,7 @@ class ShipmentOmxRequest implements OmxRequestInterface
                 $shipment['addServices'][] = $this->parseAdditionalService($additional_service);
             }
 
-            if ($this->isContentDescriptionRequired()) {
+            if ($this->isContentDescriptionRequired($shipment)) {
                 $shipment['contentDescription'] = $package->getContentDescription();
             }
 
@@ -135,28 +135,26 @@ class ShipmentOmxRequest implements OmxRequestInterface
         $this->verifyInternationalShipments();
     }
 
-    public function isContentDescriptionRequired()
+    public function isContentDescriptionRequired($shipment)
     {
-        $verify_not_required = array('LT', 'LV', 'EE', 'FI');
+        $description_not_required = array('LT', 'LV', 'EE', 'FI');
 
-        foreach ($this->shipments as $shipment) {
-            if (!isset($shipment['receiverAddressee'])) {
-                return true;
-            }
+        if (!isset($shipment['receiverAddressee'])) {
+            return true;
+        }
 
-            $receiver = $shipment['receiverAddressee'];
+        $receiver = $shipment['receiverAddressee'];
 
-            if (!isset($receiver['address']['country']) || empty($receiver['address']['country'])) {
-                return true;
-            }
+        if (!isset($receiver['address']['country']) || empty($receiver['address']['country'])) {
+            return true;
+        }
 
-            if (!in_array(strtoupper($receiver['address']['country']), $verify_not_required)) {
-                return true;
-            }
+        if (in_array(strtoupper($receiver['address']['country']), $description_not_required)) {
+            return false;
+        }
 
-            if (!isset($shipment['customs']['shipmentItems']['description']) || empty($shipment['customs']['shipmentItems']['description'])) {
-                return true;
-            }
+        if (!isset($shipment['customs']['shipmentItems']['description']) || empty($shipment['customs']['shipmentItems']['description'])) {
+            return true;
         }
 
         return false;
