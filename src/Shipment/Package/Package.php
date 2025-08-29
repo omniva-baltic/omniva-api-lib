@@ -14,8 +14,9 @@ use Mijora\Omniva\Shipment\Shipment;
 
 class Package
 {
-    /** Shipment comment string symbol limit */
+    /** Shipment strings symbol limit */
     const LIMIT_COMMENT_LENGTH = 128;
+    const LIMIT_CONTENT_DESC_LENGTH = 500;
 
     const MAIN_SERVICE_PARCEL = 'PARCEL';
     const MAIN_SERVICE_LETTER = 'LETTER';
@@ -216,6 +217,9 @@ class Package
     /** @var string Commentary about the delivery string(128). For OMX */
     private $comment;
 
+    /** @var string Description of the contents of the shipment string(500). For OMX. Required for international shipments */
+    private $contentDescription;
+
     /**
      * @var string $comment Comment string, will be truncated to max 128
      * 
@@ -237,6 +241,29 @@ class Package
     public function getComment()
     {
         return (string) $this->comment;
+    }
+
+    /**
+     * @var string $contentDescription Content description string, will be truncated to max 500
+     * 
+     * @return Package
+     */
+    public function setContentDescription($contentDescription)
+    {
+        $this->contentDescription = mb_substr(
+            strip_tags((string) $contentDescription),
+            0,
+            self::LIMIT_CONTENT_DESC_LENGTH
+        );
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentDescription()
+    {
+        return (string) $this->contentDescription;
     }
 
     /**
