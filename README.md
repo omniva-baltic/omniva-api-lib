@@ -60,7 +60,8 @@ Use `example/config.php` to enter your API username and password for testing the
     $package = new Package();
     $package
             ->setId('5454') //id number, optional. Use same ID for several Package if want use multiparcels service
-            ->setService('QH'); //service code of package
+            ->setService('QH') //service code of package
+            ->setContentDescription('2×Cap; 1×Hoodie; 3×Shirts'); //Description of package contents. Required for international shipments. Max 500 chars
 
     //create additional services and add to package, optional        
     $additionalService = (new AdditionalService())->setServiceCode('SS');

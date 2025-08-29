@@ -90,11 +90,17 @@ class ShipmentOmxRequest implements OmxRequestInterface
                 $shipment['addServices'][] = $this->parseAdditionalService($additional_service);
             }
 
+            if ($this->isContentDescriptionRequired($shipment)) {
+                $shipment['contentDescription'] = $package->getContentDescription();
+            }
+
             $this->shipments[$package_id] = $shipment;
 
             if ($this->isConsolidatedShipmentsAllowed($package)) {
                 $this->shipment_allows_consolidation[$package_id] = true;
             }
+
+            $this->verifyInternationalShipments();
 
             return $this;
         }
@@ -125,6 +131,71 @@ class ShipmentOmxRequest implements OmxRequestInterface
         $additional_services = $package->getAdditionalServicesOmx();
 
         $this->shipments[$package_id]['consolidatedShipments'][] = $consolidate_data;
+
+        $this->verifyInternationalShipments();
+    }
+
+    public function isContentDescriptionRequired($shipment)
+    {
+        $description_not_required = array('LT', 'LV', 'EE', 'FI');
+
+        if (!isset($shipment['receiverAddressee'])) {
+            return true;
+        }
+
+        $receiver = $shipment['receiverAddressee'];
+
+        if (!isset($receiver['address']['country']) || empty($receiver['address']['country'])) {
+            return true;
+        }
+
+        if (in_array(strtoupper($receiver['address']['country']), $description_not_required)) {
+            return false;
+        }
+
+        if (!isset($shipment['customs']['shipmentItems']['description']) || empty($shipment['customs']['shipmentItems']['description'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function verifyInternationalShipments()
+    {
+        $verify_not_required = array('LT', 'LV', 'EE', 'FI');
+
+        foreach ($this->shipments as $shipment) {
+            if (!isset($shipment['receiverAddressee']) || !isset($shipment['senderAddressee'])) {
+                throw new OmnivaException("Cannot verify international shipment data");
+            }
+
+            $receiver = $shipment['receiverAddressee'];
+            $sender = $shipment['senderAddressee'];
+
+            if (!isset($receiver['address']) || empty($receiver['address']['country'])) {
+                throw new OmnivaException("Recipient country could not be determined during shipment verification");
+            }
+
+            if (in_array(strtoupper($receiver['address']['country']), $verify_not_required)) {
+                continue;
+            }
+
+            if (empty($receiver['contactMobile']) && empty($receiver['contactPhone'])) {
+                throw new OmnivaException("When registering an international shipment, the recipient's phone number is required");
+            }
+
+            if (empty($sender['contactMobile']) && empty($sender['contactPhone'])) {
+                throw new OmnivaException("When registering an international shipment, the sender's phone number is required");
+            }
+
+            if (empty($shipment['contentDescription'])) {
+                if (!isset($shipment['customs']['shipmentItems']['description']) || empty($shipment['customs']['shipmentItems']['description'])) {
+                    throw new OmnivaException("When registering an international shipment, a description of the shipment is required");
+                }
+            }
+        }
+
+        return true;
     }
 
     public function canAddConsolidatedShipment($package_id)
