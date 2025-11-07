@@ -1,4 +1,3 @@
-
 # Omniva Api library
 
 Omniva API library, to help to integrate with other systems 
@@ -291,17 +290,13 @@ Anytime during setup or when calling api Exception can be thrown with errors. Re
     $tracking = new Tracking(); //tracking object
     $tracking->setAuth($username, $password); //set auth data
     
-    //returns array of data or OmnivaException on error
-    $results = $tracking->getTracking($barcodes); //pass array of barcodes
+    //return array of events or OmnivaException on error
+    $result = $tracking->getTrackingOmx($barcode); //pass string of barcode
     
-    //results array key will be tracking number and value will be array with date, event and state keys
-    if (is_array($results)) {
-        foreach ($results as $barcode => $tracking_data) {
-            echo '**************<br/>';
-            echo $barcode . '<br/>';
-            foreach ($tracking_data as $data) {
-                echo $data['date']->format('Y-m-d H:i:s') . ' ' . ' ' . $data['event'] . ' ' . $data['state'] . '<br/>';
-            }
+    //result array with events, each with an ID, code, name and date
+    if (is_array($result)) {
+        foreach ($result as $event) {
+            echo $event['eventId'] . ': ' . (new DateTime($event['eventDate']))->format('Y-m-d H:i:s') . ' ' . $event['eventCode'] . ' ' . $event['eventName'] . '<br/>';
         }
     }
 
