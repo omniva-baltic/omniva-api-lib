@@ -65,15 +65,16 @@ class Label
         return $this->getLabels($barcodes, $email);
     }
 
-    /*
-     * $mode - I inline, D download, F save to file, S - return string
-     * @param array $barcodes
-     * @param bool $combine
-     * @param string $mode
-     * @param string $name
-     * @return mixed
+    /**
+     * Dowloads or return a PDF of labels for the given barcodes
+     * 
+     * @param array $barcodes       Array of barcodes
+     * @param bool $combine         If true, combines labels in a 2x2 grid; if false, one label per page
+     * @param string $mode          Output mode: 'I' = inline, 'D' = download, 'F' = save to file, 'S' = return as string.
+     * @param string $name          PDF file name (used for 'D', 'F', 'S' modes)
+     * @param bool $use_legacy_api  If true, uses the legacy labels API
+     * @return mixed                Returns PDF content as string if $mode = 'S', or false on failure
      */
-
     public function downloadLabels($barcodes, $combine = true, $mode = 'I', $name = 'Omniva labels', $use_legacy_api = false)
     {
         $result = $this->getLabels($barcodes, $use_legacy_api);
@@ -86,21 +87,31 @@ class Label
                 $page_count = $pdf->setSourceFile($stream);
                 for ($i = 1; $i <= $page_count; $i++) {
                     $tplidx = $pdf->ImportPage($i);
+                    $s = $pdf->getTemplatesize($tplidx);
                     if ($print_type == '1') {
-                        $s = $pdf->getTemplatesize($tplidx);
-                        $pdf->AddPage('P', array($s['width'], $s['height']));
+                        $pdf->AddPage($s['orientation'], array($s['width'], $s['height']));
                         $pdf->useTemplate($tplidx);
                     } else if ($print_type == '4') {
+                        $maxW = 94.5;
+                        $maxH = 108;
+                        $scale = $maxW / $s['width'];
+                        $w = $maxW;
+                        $h = $s['height'] * $scale;
+                        if ($h > $maxH) {
+                            $scale = $maxH / $s['height'];
+                            $h = $maxH;
+                            $w = $s['width'] * $scale;
+                        }
                         if ($label_count == 0 || $label_count == 4) {
                             $pdf->AddPage('P');
                             $label_count = 0;
-                            $pdf->useTemplate($tplidx, 5, 15, 94.5, 108, false);
+                            $pdf->useTemplate($tplidx, 5, 15, $w, $h, false);
                         } else if ($label_count == 1) {
-                            $pdf->useTemplate($tplidx, 110, 15, 94.5, 108, false);
+                            $pdf->useTemplate($tplidx, 110, 15, $w, $h, false);
                         } else if ($label_count == 2) {
-                            $pdf->useTemplate($tplidx, 5, 160, 94.5, 108, false);
+                            $pdf->useTemplate($tplidx, 5, 160, $w, $h, false);
                         } else if ($label_count == 3) {
-                            $pdf->useTemplate($tplidx, 110, 160, 94.5, 108, false);
+                            $pdf->useTemplate($tplidx, 110, 160, $w, $h, false);
                         }
                         $label_count++;
                     }
