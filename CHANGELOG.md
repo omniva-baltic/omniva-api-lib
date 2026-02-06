@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.3.6]
 - fixed PDF generation of labels to maintain original page orientation and aspect ratio, preventing distortion
 
 ## [1.3.5]
