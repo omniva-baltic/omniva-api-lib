@@ -40,8 +40,8 @@ class Tracking
             }
             $all_trackings = $this->request->getTracking();
 
-            if (isset($all_trackings->event)) {
-                foreach ($all_trackings->event as $event) {
+            if (isset($all_trackings['tracking']->event)) {
+                foreach ($all_trackings['tracking']->event as $event) {
                     if (in_array((string) $event->packetCode, $barcodes)) {
                         if (!isset($trackings[(string)$event->packetCode] )) {
                             $trackings[(string) $event->packetCode] = array();
