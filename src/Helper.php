@@ -132,4 +132,26 @@ class Helper
 
         return $value;
     }
+
+    /**
+     * Recursively converts strings or arrays of strings to UTF-8 encoding.
+     *
+     * @param mixed  $mixed          String or array to convert.
+     * @param string $from_encoding  Source encoding (default 'auto').
+     *
+     * @return mixed UTF-8 encoded string or array.
+     */
+    public static function convertToUtf8($mixed, $from_encoding = 'auto')
+    {
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = self::convertToUtf8($value, $from_encoding);
+            }
+        } elseif (is_string($mixed)) {
+            if (!mb_check_encoding($mixed, 'UTF-8')) {
+                $mixed = mb_convert_encoding($mixed, 'UTF-8', $from_encoding);
+            }
+        }
+        return $mixed;
+    }
 }

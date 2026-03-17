@@ -1,3 +1,6 @@
+## [Unreleased]
+- added ability to convert content description to UTF-8
+
 ## [1.3.6]
 - fixed PDF generation of labels to maintain original page orientation and aspect ratio, preventing distortion
 
