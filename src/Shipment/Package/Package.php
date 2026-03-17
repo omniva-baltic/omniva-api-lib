@@ -2,6 +2,7 @@
 
 namespace Mijora\Omniva\Shipment\Package;
 
+use Mijora\Omniva\Helper;
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Shipment\AdditionalService\AdditionalServiceInterface;
 use Mijora\Omniva\Shipment\AdditionalService\CodService;
