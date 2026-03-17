@@ -245,11 +245,16 @@ class Package
 
     /**
      * @var string $contentDescription Content description string, will be truncated to max 500
+     * @var string $encoding Optional source encoding. If provided, the content will be converted to UTF-8.
      * 
      * @return Package
      */
-    public function setContentDescription($contentDescription)
+    public function setContentDescription($contentDescription, $encoding = null)
     {
+        if ($encoding) {
+            $contentDescription = Helper::convertToUtf8((string) $contentDescription, $encoding);
+        }
+
         $this->contentDescription = mb_substr(
             strip_tags((string) $contentDescription),
             0,
