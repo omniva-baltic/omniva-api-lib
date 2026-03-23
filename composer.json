@@ -2,17 +2,24 @@
     "name": "mijora/omniva-api",
     "description": "Omniva API wrapper",
     "type": "library",
-    "version": "1.3.6",
+    "version": "1.3.7",
     "authors": [
         {
             "name": "Modestas",
             "email": "modestas.slivinskas@gmail.com",
-            "role": "Developer"
+            "role": "Former developer at UAB Mijora"
+        },
+        {
+            "name": "Marijus K.",
+            "email": "info@markak.lt",
+            "homepage": "https://markak.lt",
+            "role": "Developer at UAB Mijora"
         },
         {
             "name": "UAB Mijora",
             "email": "info@mijora.lt",
-            "homepage": "https://mijora.dev"
+            "homepage": "https://mijora.dev",
+            "role": "Company / Employer of developers"
         }
     ],
     "require": {
