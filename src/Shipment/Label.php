@@ -78,50 +78,91 @@ class Label
     public function downloadLabels($barcodes, $combine = true, $mode = 'I', $name = 'Omniva labels', $use_legacy_api = false)
     {
         $result = $this->getLabels($barcodes, $use_legacy_api);
-        if (is_array($result['labels'])) {
-            $pdf = new Fpdi();
-            $label_count = 0;
-            $print_type = $combine ? 4 : 1;
-            foreach ($result['labels'] as $barcode => $pdf_data) {
-                $stream = StreamReader::createByString(base64_decode($pdf_data));
-                $page_count = $pdf->setSourceFile($stream);
-                for ($i = 1; $i <= $page_count; $i++) {
-                    $tplidx = $pdf->ImportPage($i);
-                    $s = $pdf->getTemplatesize($tplidx);
-                    if ($print_type == '1') {
-                        $pdf->AddPage($s['orientation'], array($s['width'], $s['height']));
-                        $pdf->useTemplate($tplidx);
-                    } else if ($print_type == '4') {
-                        $maxW = 94.5;
-                        $maxH = 108;
-                        $scale = $maxW / $s['width'];
-                        $w = $maxW;
-                        $h = $s['height'] * $scale;
-                        if ($h > $maxH) {
-                            $scale = $maxH / $s['height'];
-                            $h = $maxH;
-                            $w = $s['width'] * $scale;
-                        }
-                        if ($label_count == 0 || $label_count == 4) {
+
+        if (!is_array($result['labels'])) {
+            return false;
+        }
+
+        $pdf = new Fpdi();
+        
+        $label_count = 0;
+        $print_type = $combine ? 4 : 1;
+        $marginX = 5; // mm
+        $marginY = 15; // mm
+        $marginBetween = 5; // mm
+        
+        foreach ($result['labels'] as $barcode => $pdf_data) {
+            $stream = StreamReader::createByString(base64_decode($pdf_data));
+            $page_count = $pdf->setSourceFile($stream);
+            for ($i = 1; $i <= $page_count; $i++) {
+                $tplidx = $pdf->ImportPage($i);
+                $s = $pdf->getTemplateSize($tplidx);
+
+                if ($print_type == 1) {
+                    $pdf->AddPage($s['orientation'], array($s['width'], $s['height']));
+                    $pdf->useTemplate($tplidx);
+                } else if ($print_type == 4) {
+                    if ($label_count == 0) {
+                        $pdf->AddPage('P');
+                    }
+                    $pageW = $pdf->GetPageWidth();
+                    $pageH = $pdf->GetPageHeight();
+                    $maxW = ($pageW - 2 * $marginX - $marginBetween) / 2;
+                    $maxH = ($pageH - 2 * $marginY - $marginBetween) / 2;
+
+                    $isA5Landscape = false;
+                    $sRatio = $s['width'] / $s['height'];
+                    if ($s['orientation'] == 'L' && $sRatio > 1.3 && $sRatio < 1.5 && $s['width'] >= $maxW * 2) {
+                        // Set only if it is a very large label (at least twice the size of the allocated space) to keep the text legible
+                        $isA5Landscape = true;
+                    }
+
+                    if ($isA5Landscape) {
+                        $maxW = $pageW - 2 * $marginX;
+                        if ($label_count == 1) { // Move to next row if it is the right column
+                            $label_count++;
+                        } else if ($label_count == 3) { // Add page if it is the right column
                             $pdf->AddPage('P');
                             $label_count = 0;
-                            $pdf->useTemplate($tplidx, 5, 15, $w, $h, false);
-                        } else if ($label_count == 1) {
-                            $pdf->useTemplate($tplidx, 110, 15, $w, $h, false);
-                        } else if ($label_count == 2) {
-                            $pdf->useTemplate($tplidx, 5, 160, $w, $h, false);
-                        } else if ($label_count == 3) {
-                            $pdf->useTemplate($tplidx, 110, 160, $w, $h, false);
                         }
-                        $label_count++;
+                    }
+
+                    $scale = $maxW / $s['width'];
+                    $w = $maxW;
+                    $h = $s['height'] * $scale;
+                    if ($h > $maxH) {
+                        $scale = $maxH / $s['height'];
+                        $h = $maxH;
+                        $w = $s['width'] * $scale;
+                    }
+
+                    $position = [$marginX, $marginY];
+                    if ($label_count == 1) {
+                        $position = [$marginX + $maxW + $marginBetween, $marginY];
+                    } else if ($label_count == 2) {
+                        $position = [$marginX, $marginY + $maxH + $marginBetween];
+                    } else if ($label_count == 3) {
+                        $position = [$marginX + $maxW + $marginBetween, $marginY + $maxH + $marginBetween];
+                    }
+
+                    $pdf->useTemplate($tplidx, $position[0], $position[1], $w, $h, false);
+
+                    if ($isA5Landscape) {
+                        $label_count++; // 2 places were taken
+                    }
+
+                    $label_count++;
+                    if ($label_count == 4) {
+                        $label_count = 0;
                     }
                 }
             }
-            if ($mode === 'S') {
-                return $pdf->Output($mode, $name . '.pdf');
-            }
-            $pdf->Output($mode, $name . '.pdf');
         }
-        return false;
+        
+        if ($mode === 'S') {
+            return $pdf->Output($mode, $name . '.pdf');
+        }
+        
+        $pdf->Output($mode, $name . '.pdf');
     }
 }
