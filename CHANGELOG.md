@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.3.7]
 - added ability to convert content description to UTF-8
 - improved that large A5 landscape labels would be printed in 2 places on an A4 sheet to avoid text being too small
 
